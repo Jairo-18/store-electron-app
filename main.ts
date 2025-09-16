@@ -304,6 +304,7 @@ function startBackend(): Promise<boolean> {
 
       backendProcess = spawn(nodeExec, args, {
         cwd: backendCwd,
+
         env: backendEnv,
         stdio: ['pipe', 'pipe', 'pipe'],
         windowsHide: true,
