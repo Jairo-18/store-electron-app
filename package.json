@@ -1,0 +1,100 @@
+{
+  "name": "store",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "dist-electron/main.js",
+  "author": "Tu Nombre <tuemail@ejemplo.com>",
+  "description": "Aplicación de escritorio con Electron + NestJS + Angular",
+  "scripts": {
+    "compile:electron": "tsc --project tsconfig.electron.json",
+    "electron": "electron .",
+    "start": "npm run build-all && npm run electron",
+    "build-frontend": "npm --prefix frontend run build",
+    "build-backend": "npm --prefix backend run build && npm run copy-backend-files",
+    "build-electron": "npm run compile:electron",
+    "build-all": "npm run build-frontend && npm run build-backend && npm run build-electron",
+    "copy-backend-files": "node scripts/copy-backend-files.js",
+    "dist": "npm run build-all && electron-builder --publish=never",
+    "dist:win": "npm run build-all && electron-builder --win --publish=never",
+    "start-frontend": "npm --prefix frontend start",
+    "start-backend": "npm --prefix backend run start",
+    "migration:run": "npm --prefix backend run migration:run",
+    "migration:generate": "npm --prefix backend run migration:generate",
+    "migration:create": "npm --prefix backend run migration:create",
+    "migration:revert": "npm --prefix backend run migration:revert",
+    "migration:run:prod": "cross-env NODE_ENV=production npm --prefix backend run typeorm migration:run -- -d typeorm.config.ts",
+    "migration:revert:prod": "cross-env NODE_ENV=production npm --prefix backend run typeorm migration:revert -- -d typeorm.config.ts"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.2.2",
+    "pg": "^8.16.3",
+    "reflect-metadata": "^0.2.2",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typeorm": "^0.3.26"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "cross-env": "^7.0.3",
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.12",
+    "typescript": "~5.9.2"
+  },
+  "build": {
+    "appId": "software.jairo",
+    "productName": "SoftwareJairo",
+    "directories": {
+      "output": "release"
+    },
+    "extraResources": [
+      {
+        "from": "backend/backend.exe",
+        "to": "backend/backend.exe"
+      },
+      {
+        "from": "backend/.env.production",
+        "to": "backend/.env.production"
+      },
+      {
+        "from": "backend/.env.development",
+        "to": "backend/.env.development"
+      },
+      {
+        "from": "backend/dist/typeorm.config.js",
+        "to": "backend/typeorm.config.js"
+      },
+      {
+        "from": "backend/dist/src/shared/entities",
+        "to": "backend/entities"
+      },
+      {
+        "from": "backend/dist/src/migrations",
+        "to": "backend/migrations"
+      }
+    ],
+    "files": [
+      "dist-electron/**/*",
+      "frontend/dist/frontend/**/*",
+      "assets/**/*",
+      "!**/.vscode",
+      "!**/.git",
+      "!**/node_modules",
+      "!**/*.map",
+      "!**/*.log",
+      "!release/**",
+      "!**/tests/**"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/favicon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}
