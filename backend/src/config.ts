@@ -18,6 +18,10 @@ export const config = async () => {
         allowedMethods,
       },
     },
+    swagger: {
+      user: process.env.SWAGGER_USER || 'admin',
+      password: process.env.SWAGGER_PASSWORD || 'password',
+    },
     db: {
       type: process.env.DB_TYPE,
       host: process.env.DB_HOST,

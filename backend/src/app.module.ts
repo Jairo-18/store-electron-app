@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { config } from './config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { UserModule } from './user/user.module';
+// import { ProductModule } from './products/product.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { join } from 'path';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
+    // ProductModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

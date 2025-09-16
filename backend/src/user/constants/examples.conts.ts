@@ -1,0 +1,148 @@
+export const GET_ALL_USER_EXAMPLE = {
+  users: [
+    {
+      userId: 'd423cb14-3687-48a6-914e-b35d523c19a7',
+      identificationNumber: '1120066430',
+      firstName: 'Camilo Juan',
+      lastName: 'Peréz Días',
+      phone: '3102103660',
+      isActive: true,
+      email: 'test@gmail.com',
+      roleType: {
+        id: '263c59bc-6c1c-42d5-8f83-a475c1661549',
+        code: 'ADMIN',
+        name: 'ADMINISTRADOR',
+      },
+      identificationType: {
+        id: 1,
+        code: 'CC',
+        name: 'CÉDULA DE CIUDADANÍA',
+      },
+      phoneCode: {
+        id: 2,
+        code: '+355',
+        name: 'ALBANIA',
+      },
+    },
+    {
+      userId: 'd423cb14-3687-48a6-914e-b35d523c19a7',
+      identificationNumber: '1120066430',
+      firstName: 'Camilo Juan',
+      lastName: 'Peréz Días',
+      phone: '3102103660',
+      isActive: true,
+      email: 'test@gmail.com',
+      roleType: {
+        id: '263c59bc-6c1c-42d5-8f83-a475c1661549',
+        code: 'ADMIN',
+        name: 'ADMINISTRADOR',
+      },
+      identificationType: {
+        id: 1,
+        code: 'CC',
+        name: 'CÉDULA DE CIUDADANÍA',
+      },
+      phoneCode: {
+        id: 2,
+        code: '+355',
+        name: 'ALBANIA',
+      },
+    },
+    {
+      userId: 'd423cb14-3687-48a6-914e-b35d523c19a7',
+      identificationNumber: '1120066430',
+      firstName: 'Camilo Juan',
+      lastName: 'Peréz Días',
+      phone: '3102103660',
+      isActive: true,
+      email: 'test@gmail.com',
+      roleType: {
+        id: '263c59bc-6c1c-42d5-8f83-a475c1661549',
+        code: 'ADMIN',
+        name: 'ADMINISTRADOR',
+      },
+      identificationType: {
+        id: 1,
+        code: 'CC',
+        name: 'CÉDULA DE CIUDADANÍA',
+      },
+      phoneCode: {
+        id: 2,
+        code: '+355',
+        name: 'ALBANIA',
+      },
+    },
+    {
+      userId: 'd423cb14-3687-48a6-914e-b35d523c19a7',
+      identificationNumber: '1120066430',
+      firstName: 'Camilo Juan',
+      lastName: 'Peréz Días',
+      phone: '3102103660',
+      isActive: true,
+      email: 'test@gmail.com',
+      roleType: {
+        id: '263c59bc-6c1c-42d5-8f83-a475c1661549',
+        code: 'ADMIN',
+        name: 'ADMINISTRADOR',
+      },
+      identificationType: {
+        id: 1,
+        code: 'CC',
+        name: 'CÉDULA DE CIUDADANÍA',
+      },
+      phoneCode: {
+        id: 2,
+        code: '+355',
+        name: 'ALBANIA',
+      },
+    },
+    {
+      userId: 'd423cb14-3687-48a6-914e-b35d523c19a7',
+      identificationNumber: '1120066430',
+      firstName: 'Camilo Juan',
+      lastName: 'Peréz Días',
+      phone: '3102103660',
+      isActive: true,
+      email: 'test@gmail.com',
+      roleType: {
+        id: '263c59bc-6c1c-42d5-8f83-a475c1661549',
+        code: 'ADMIN',
+        name: 'ADMINISTRADOR',
+      },
+      identificationType: {
+        id: 1,
+        code: 'CC',
+        name: 'CÉDULA DE CIUDADANÍA',
+      },
+      phoneCode: {
+        id: 2,
+        code: '+355',
+        name: 'ALBANIA',
+      },
+    },
+  ],
+};
+export const GET_USER_EXAMPLE = {
+  userId: 'd423cb14-3687-48a6-914e-b35d523c19a7',
+  identificationNumber: '1120066430',
+  firstName: 'Camilo Juan',
+  lastName: 'Peréz Días',
+  phone: '3102103660',
+  isActive: true,
+  email: 'test@gmail.com',
+  roleType: {
+    id: '263c59bc-6c1c-42d5-8f83-a475c1661549',
+    code: 'ADMIN',
+    name: 'ADMINISTRADOR',
+  },
+  identificationType: {
+    id: 1,
+    code: 'CC',
+    name: 'CÉDULA DE CIUDADANÍA',
+  },
+  phoneCode: {
+    id: 2,
+    code: '+355',
+    name: 'ALBANIA',
+  },
+};
