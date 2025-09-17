@@ -48,12 +48,6 @@ export class User {
   })
   phone: string;
 
-  @Column('varchar', {
-    length: 255,
-    nullable: false,
-  })
-  password: string;
-
   @ManyToOne(() => PhoneCode, (phoneCode) => phoneCode.user)
   @JoinColumn({ name: 'phoneCodeId' })
   phoneCode: PhoneCode;

@@ -27,7 +27,7 @@ export class IdentificationTypeDto extends BaseTypeDto {
     example: '2',
     description: 'Identificador único del identificación',
   })
-  id: string;
+  id: number;
 }
 
 export class PhoneCodeDto extends BaseTypeDto {
@@ -35,7 +35,7 @@ export class PhoneCodeDto extends BaseTypeDto {
     example: '3',
     description: 'Identificador único de código de país',
   })
-  id: string;
+  id: number;
 }
 
 export class PayTypeDto extends BaseTypeDto {

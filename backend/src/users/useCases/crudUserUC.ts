@@ -18,10 +18,6 @@ export class CrudUserUC {
     return await this._crudUserService.findOne(id);
   }
 
-  async initData(id: string) {
-    return await this._crudUserService.initData(id);
-  }
-
   async update(id: string, userData: UpdateUserDto) {
     return await this._crudUserService.update(id, userData);
   }

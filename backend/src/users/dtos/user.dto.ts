@@ -156,3 +156,19 @@ export class PartialUserDto {
   })
   identificationNumber: string;
 }
+
+export class UserResponseDto {
+  id: string;
+  identificationNumber: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  isActive: boolean;
+  roleTypeId?: string;
+  identificationTypeId?: number;
+  phoneCodeId?: number;
+  roleType?: { id: string; code: string; name: string };
+  identificationType?: { id: number; code: string; name: string };
+  phoneCode?: { id: number; code: string; name: string };
+}

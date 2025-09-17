@@ -1,5 +1,4 @@
 import { CrudUserUC } from './../useCases/crudUserUC';
-import { User } from 'src/shared/entities/user.entity';
 import {
   CreateUserDto,
   GetAllUsersResposeDto,
@@ -38,6 +37,7 @@ import {
   PaginatedListUsersParamsDto,
   PaginatedUserSelectParamsDto,
   PartialUserDto,
+  UserResponseDto,
 } from '../dtos/user.dto';
 
 @Controller('user')
@@ -90,10 +90,10 @@ export class UserController {
   }
 
   @Get('/paginated-list')
-  @ApiOkResponse({ type: ResponsePaginationDto<User> })
+  @ApiOkResponse({ type: ResponsePaginationDto<UserResponseDto> })
   async getPaginatedList(
     @Query() params: PaginatedListUsersParamsDto,
-  ): Promise<ResponsePaginationDto<User>> {
+  ): Promise<ResponsePaginationDto<UserResponseDto>> {
     return await this._userUC.paginatedList(params);
   }
 

@@ -12,7 +12,7 @@ import { User } from './user.entity';
 @Entity({ name: 'IdentificationType' })
 export class IdentificationType {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column('varchar', { length: 255, nullable: true })
   code: string;

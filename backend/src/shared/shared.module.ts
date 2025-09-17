@@ -1,5 +1,4 @@
 import { ScheduleModule } from '@nestjs/schedule';
-import { PasswordService } from './../user/services/password.service';
 import { InvoiceEventsListener } from './services/invoiceEventsListener.service';
 import { BalanceService } from './services/balance.service';
 import { InvoiceDetaillRepository } from './repositories/invoiceDetaill.repository';
@@ -117,7 +116,6 @@ export class SharedModule {
         BalanceService,
         RepositoryService,
         InvoiceEventsListener,
-        PasswordService,
         GeneralInvoiceDetaillService,
       ],
       exports: [
@@ -139,7 +137,6 @@ export class SharedModule {
         BalanceService,
         RepositoryService,
         InvoiceEventsListener,
-        PasswordService,
         GeneralInvoiceDetaillService,
       ],
     };

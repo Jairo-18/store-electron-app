@@ -11,6 +11,7 @@ import {
   IsOptional,
   ValidateIf,
   IsBoolean,
+  IsNumber,
 } from 'class-validator';
 import { HttpStatus } from '@nestjs/common';
 import { GET_ALL_USER_EXAMPLE } from '../constants/examples.conts';
@@ -30,9 +31,9 @@ export class CreateUserDto {
     required: true,
     description: 'ID del número de identificación',
   })
-  @IsString()
+  @IsNumber()
   @IsNotEmpty({ message: 'El tipo de identificación es requerido' })
-  identificationType: string;
+  identificationType: number;
 
   @ApiProperty({
     example: '1120066430',
@@ -74,9 +75,9 @@ export class CreateUserDto {
     required: true,
     description: 'ID de código de país',
   })
-  @IsString()
+  @IsNotEmpty()
   @IsNotEmpty({ message: 'El prefijo es requerido' })
-  phoneCode: string;
+  phoneCode: number;
 
   @ApiProperty({
     example: '3102103660',
@@ -85,24 +86,6 @@ export class CreateUserDto {
   })
   @IsNotEmpty({ message: 'El celular es requerido' })
   phone: string;
-
-  @ApiProperty({
-    example: 'Test@123',
-    required: true,
-    description: 'Contraseña',
-  })
-  @IsString()
-  @IsNotEmpty({ message: 'La contraseña es requerida' })
-  password: string;
-
-  @ApiProperty({
-    example: 'Test@123',
-    required: true,
-    description: 'Confirmación de contraseña',
-  })
-  @IsString()
-  @IsNotEmpty({ message: 'La confirmación de contraseña es requerida' })
-  confirmPassword: string;
 
   @ApiProperty({
     example: true,
@@ -125,7 +108,7 @@ export class CreateUserDto {
 }
 
 export interface GetAllUsersRespose {
-  users: Omit<User, 'password'>[];
+  users: User[];
 }
 
 export class GetAllUsersResposeDto implements BaseResponseDto {
@@ -160,9 +143,9 @@ export class UpdateUserDto {
     required: false,
     description: 'ID del número de identificación',
   })
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  identificationType: string;
+  identificationType: number;
 
   @ApiProperty({
     example: '1120066430',
@@ -206,8 +189,8 @@ export class UpdateUserDto {
     description: 'Código de país',
   })
   @IsOptional()
-  @IsString()
-  phoneCode: string;
+  @IsNumber()
+  phoneCode: number;
 
   @ApiProperty({
     example: '3102103550',

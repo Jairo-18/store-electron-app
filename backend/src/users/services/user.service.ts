@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { User } from './../../shared/entities/user.entity';
 import { ResponsePaginationDto } from './../../shared/dtos/pagination.dto';
 import { PageMetaDto } from './../../shared/dtos/pageMeta.dto';
@@ -71,20 +72,19 @@ export class UserService {
       baseConditions.roleType = { id: params.roleType };
     }
 
-    //cuando viene por id o uuid se hace asi
-    if (params.identificationType) {
-      baseConditions.identificationType = {
-        id: params.identificationType,
-      };
-    }
-
     if (params.isActive !== undefined) {
       baseConditions.isActive = Equal(params.isActive);
     }
 
+    if (params.identificationType) {
+      baseConditions.identificationType = {
+        id: Number(params.identificationType),
+      };
+    }
+
     if (params.phoneCode) {
       baseConditions.phoneCode = {
-        id: params.phoneCode,
+        id: Number(params.phoneCode),
       };
     }
 
@@ -115,14 +115,34 @@ export class UserService {
     });
 
     const users = entities.map((user) => {
-      const newUser = {
-        ...user,
+      const { createdAt, updatedAt, ...rest } = user;
+      return {
+        ...rest,
         roleTypeId: user?.roleType?.id,
         identificationTypeId: user?.identificationType?.id,
         phoneCodeId: user?.phoneCode?.id,
+        roleType: user?.roleType
+          ? {
+              id: user.roleType.id,
+              code: user.roleType.code,
+              name: user.roleType.name,
+            }
+          : null,
+        identificationType: user?.identificationType
+          ? {
+              id: user.identificationType.id,
+              code: user.identificationType.code,
+              name: user.identificationType.name,
+            }
+          : null,
+        phoneCode: user?.phoneCode
+          ? {
+              id: user.phoneCode.id,
+              code: user.phoneCode.code,
+              name: user.phoneCode.name,
+            }
+          : null,
       };
-
-      return newUser;
     });
 
     const pageMetaDto = new PageMetaDto({

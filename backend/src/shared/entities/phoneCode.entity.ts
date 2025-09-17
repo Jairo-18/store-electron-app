@@ -12,7 +12,7 @@ import { User } from './user.entity';
 @Entity()
 export class PhoneCode {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column('varchar', { length: 255, nullable: true })
   code?: string;
