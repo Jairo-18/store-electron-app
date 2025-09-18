@@ -103,15 +103,15 @@ export class CrudUserService {
     return { rowId: res.identifiers[0].id };
   }
 
-  async update(id: string, userData: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     const userExist = await this.findOne(id);
     if (!userExist) {
       throw new HttpException('El usuario no existe', HttpStatus.NOT_FOUND);
     }
 
-    if (userData.email) {
+    if (updateUserDto.email) {
       const emailExist = await this._userRepository.findOne({
-        where: { id: Not(id), email: userData.email },
+        where: { id: Not(id), email: updateUserDto.email },
       });
       if (emailExist) {
         throw new HttpException(
@@ -121,12 +121,15 @@ export class CrudUserService {
       }
     }
 
-    if (userData.identificationType || userData.identificationNumber) {
+    if (
+      updateUserDto.identificationType ||
+      updateUserDto.identificationNumber
+    ) {
       const identificationNumberExist = await this._userRepository.findOne({
         where: {
           id: Not(id),
-          identificationNumber: userData.identificationNumber,
-          identificationType: { id: Number(userData.identificationType) },
+          identificationNumber: updateUserDto.identificationNumber,
+          identificationType: { id: Number(updateUserDto.identificationType) },
         },
       });
       if (identificationNumberExist) {
@@ -137,12 +140,12 @@ export class CrudUserService {
       }
     }
 
-    if (userData.phoneCode || userData.phone) {
+    if (updateUserDto.phoneCode || updateUserDto.phone) {
       const phoneExist = await this._userRepository.findOne({
         where: {
           id: Not(id),
-          phone: userData.phone,
-          phoneCode: { id: Number(userData.phoneCode) },
+          phone: updateUserDto.phone,
+          phoneCode: { id: Number(updateUserDto.phoneCode) },
         },
       });
       if (phoneExist) {
@@ -153,26 +156,26 @@ export class CrudUserService {
       }
     }
 
-    const roleType = userData.roleType
+    const roleType = updateUserDto.roleType
       ? await this._roleTypeRepository.findOne({
-          where: { id: String(userData.roleType) },
+          where: { id: String(updateUserDto.roleType) },
         })
       : userExist.roleType;
 
-    const identificationType = userData.identificationType
+    const identificationType = updateUserDto.identificationType
       ? await this._identificationTypeRepository.findOne({
-          where: { id: Number(userData.identificationType) },
+          where: { id: Number(updateUserDto.identificationType) },
         })
       : userExist.identificationType;
 
-    const phoneCode = userData.phoneCode
+    const phoneCode = updateUserDto.phoneCode
       ? await this._phoneCodeRepository.findOne({
-          where: { id: Number(userData.phoneCode) },
+          where: { id: Number(updateUserDto.phoneCode) },
         })
       : userExist.phoneCode;
 
     const updatedUser: Partial<User> = {
-      ...userData,
+      ...updateUserDto,
       roleType,
       identificationType,
       phoneCode,
@@ -270,13 +273,5 @@ export class CrudUserService {
       }
     }
     return user;
-  }
-
-  async findByRoles(roleNames: string[]): Promise<User[]> {
-    return this._userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.roleType', 'roleType')
-      .where('roleType.name IN (:...roleNames)', { roleNames })
-      .getMany();
   }
 }

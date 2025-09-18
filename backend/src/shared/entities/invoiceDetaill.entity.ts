@@ -1,3 +1,4 @@
+import { Service } from './services.entity';
 import { Invoice } from './invoice.entity';
 import {
   Column,
@@ -24,6 +25,10 @@ export class InvoiceDetaill {
   @ManyToOne(() => Product, { nullable: true })
   @JoinColumn({ name: 'productId' })
   product?: Product;
+
+  @ManyToOne(() => Service, { nullable: true })
+  @JoinColumn({ name: 'serviceId' })
+  service?: Service;
 
   @Column('decimal', { precision: 10, scale: 2 })
   amount?: number;

@@ -79,8 +79,10 @@ export class UserController {
   @Post('create')
   @ApiOkResponse({ type: CreatedRecordResponseDto })
   @ApiConflictResponse({ type: DuplicatedResponseDto })
-  async create(@Body() user: CreateUserDto): Promise<CreatedRecordResponseDto> {
-    const rowId = await this._crudUserUC.create(user);
+  async create(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<CreatedRecordResponseDto> {
+    const rowId = await this._crudUserUC.create(createUserDto);
     return {
       title: 'Creación de usuario',
       message: 'Registro de usuario exitoso',
@@ -113,9 +115,9 @@ export class UserController {
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async update(
     @Param('id') id: string,
-    @Body() userData: UpdateUserDto,
+    @Body() updateUserDto: UpdateUserDto,
   ): Promise<UpdateRecordResponseDto> {
-    await this._crudUserUC.update(id, userData);
+    await this._crudUserUC.update(id, updateUserDto);
     return {
       title: 'Actualizar usuario',
       message: 'Usuario actualizado correctamente',

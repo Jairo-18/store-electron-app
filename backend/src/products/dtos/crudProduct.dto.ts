@@ -134,7 +134,7 @@ export class UpdateProductDto {
     required: false,
   })
   @IsNumber()
-  @Min(0) // ahora acepta 0 o números positivos
+  @Min(0)
   @IsOptional()
   priceBuy?: number;
 
@@ -144,7 +144,7 @@ export class UpdateProductDto {
     required: false,
   })
   @IsNumber()
-  @Min(0) // acepta 0 o números positivos
+  @Min(0)
   @IsOptional()
   priceSale?: number;
 

@@ -8,6 +8,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Product } from './product.entity';
+import { Service } from './services.entity';
 
 @Entity({ name: 'CategoryType' })
 export class CategoryType {
@@ -25,6 +26,12 @@ export class CategoryType {
     onUpdate: 'CASCADE',
   })
   product: Product[];
+
+  @OneToMany(() => Service, (service) => service.categoryType, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  service: Service[];
 
   @CreateDateColumn({
     type: 'timestamp',

@@ -1,28 +1,19 @@
+import {
+  PaginatedListProductsParamsDto,
+  PaginatedProductSelectParamsDto,
+} from '../dtos/product.dto';
 import { Injectable } from '@nestjs/common';
-import { ProductService } from '../services/crudProduct.service';
-import { CreateProductDto, UpdateProductDto } from '../dtos/crudProduct.dto';
+import { CrudProductService } from '../services/product.service';
 
 @Injectable()
 export class ProductUC {
-  constructor(private readonly _productService: ProductService) {}
+  constructor(private _crudProductService: CrudProductService) {}
 
-  async create(id: CreateProductDto) {
-    return await this._productService.create(id);
+  async paginatedList(params: PaginatedListProductsParamsDto) {
+    return await this._crudProductService.paginatedList(params);
   }
 
-  async update(id: string, productData: UpdateProductDto) {
-    return await this._productService.update(id, productData);
-  }
-
-  async findAll() {
-    return await this._productService.findAll();
-  }
-
-  async findOne(id: string) {
-    return await this._productService.findOne(id);
-  }
-
-  async delete(id: number) {
-    return await this._productService.delete(id);
+  async paginatedPartialProduct(params: PaginatedProductSelectParamsDto) {
+    return await this._crudProductService.paginatedPartialProducts(params);
   }
 }

@@ -25,8 +25,6 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ProductUC } from '../useCases/productUC.uc';
-import { CrudProductUC } from '../useCases/crudProductUC.uc';
 import { ProductInterfacePaginatedList } from '../interface/product.interface';
 import {
   PaginatedListProductsParamsDto,
@@ -39,6 +37,8 @@ import {
   GetProductDto,
   UpdateProductDto,
 } from '../dtos/crudProduct.dto';
+import { CrudProductUC } from '../useCases/crudProductUC.uc';
+import { ProductUC } from '../useCases/productUC.uc';
 
 @Controller('product')
 @ApiTags('Productos')
@@ -53,16 +53,16 @@ export class ProductController {
   async getPaginatedPartial(
     @Query() params: PaginatedProductSelectParamsDto,
   ): Promise<ResponsePaginationDto<PartialProductDto>> {
-    return this._crudProductUC.paginatedPartialProduct(params);
+    return this._productUC.paginatedPartialProduct(params);
   }
 
   @Post('create')
   @ApiOkResponse({ type: CreatedRecordResponseDto })
   @ApiConflictResponse({ type: DuplicatedResponseDto })
   async create(
-    @Body() productDto: CreateProductDto,
+    @Body() createProductDto: CreateProductDto,
   ): Promise<CreatedRecordResponseDto> {
-    const rowId = await this._productUC.create(productDto);
+    const rowId = await this._crudProductUC.create(createProductDto);
     return {
       title: 'Crear producto',
       message: 'Registro de producto exitoso',
@@ -74,7 +74,7 @@ export class ProductController {
   @Get()
   @ApiOkResponse({ type: GetAllProductsResposeDto })
   async findAll(): Promise<GetAllProductsResposeDto> {
-    const products = await this._productUC.findAll();
+    const products = await this._crudProductUC.findAll();
     return {
       statusCode: HttpStatus.OK,
       data: { products },
@@ -86,9 +86,9 @@ export class ProductController {
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async update(
     @Param('id') id: string,
-    @Body() productData: UpdateProductDto,
+    @Body() updateProductDto: UpdateProductDto,
   ): Promise<UpdateRecordResponseDto> {
-    await this._productUC.update(id, productData);
+    await this._crudProductUC.update(id, updateProductDto);
 
     return {
       title: 'Actualizar producto',
@@ -102,14 +102,14 @@ export class ProductController {
   async getPaginatedList(
     @Query() params: PaginatedListProductsParamsDto,
   ): Promise<ResponsePaginationDto<ProductInterfacePaginatedList>> {
-    return await this._crudProductUC.paginatedList(params);
+    return await this._productUC.paginatedList(params);
   }
 
   @Get(':id')
   @ApiOkResponse({ type: GetProductDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async findOne(@Param('id') id: string): Promise<GetProductDto> {
-    const user = await this._productUC.findOne(id);
+    const user = await this._crudProductUC.findOne(id);
     return {
       statusCode: HttpStatus.OK,
       data: user,
@@ -122,7 +122,7 @@ export class ProductController {
   async delete(
     @Param('id') producId: number,
   ): Promise<DeleteReCordResponseDto> {
-    await this._productUC.delete(producId);
+    await this._crudProductUC.delete(producId);
     return {
       title: 'Eliminar producto',
       statusCode: HttpStatus.OK,

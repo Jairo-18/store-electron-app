@@ -6,8 +6,8 @@ import { CreateUserDto, UpdateUserDto } from '../dtos/crudUser.dto';
 export class CrudUserUC {
   constructor(private readonly _crudUserService: CrudUserService) {}
 
-  async create(user: CreateUserDto) {
-    return await this._crudUserService.create(user);
+  async create(createUserDto: CreateUserDto) {
+    return await this._crudUserService.create(createUserDto);
   }
 
   async findAll() {
@@ -18,8 +18,8 @@ export class CrudUserUC {
     return await this._crudUserService.findOne(id);
   }
 
-  async update(id: string, userData: UpdateUserDto) {
-    return await this._crudUserService.update(id, userData);
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    return await this._crudUserService.update(id, updateUserDto);
   }
 
   async delete(id: string) {

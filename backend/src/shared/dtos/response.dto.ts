@@ -21,7 +21,7 @@ export interface BaseResponseDto {
 }
 
 export interface ObjectCreatedResponseDto {
-  rowId: string;
+  rowId: string | number;
 }
 
 export class DuplicatedResponseDto implements BaseResponseDto {

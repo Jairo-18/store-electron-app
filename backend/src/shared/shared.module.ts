@@ -1,3 +1,5 @@
+import { ServiceRepository } from './repositories/service.repository';
+import { Service } from './entities/services.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { InvoiceEventsListener } from './services/invoiceEventsListener.service';
 import { BalanceService } from './services/balance.service';
@@ -96,6 +98,7 @@ export class SharedModule {
           RoleType,
           TaxeType,
           User,
+          Service,
         ]),
       ],
       controllers: [],
@@ -117,6 +120,7 @@ export class SharedModule {
         RepositoryService,
         InvoiceEventsListener,
         GeneralInvoiceDetaillService,
+        ServiceRepository,
       ],
       exports: [
         TypeOrmModule,
@@ -138,6 +142,7 @@ export class SharedModule {
         RepositoryService,
         InvoiceEventsListener,
         GeneralInvoiceDetaillService,
+        ServiceRepository,
       ],
     };
   }

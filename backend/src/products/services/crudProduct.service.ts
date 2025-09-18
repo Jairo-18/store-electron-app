@@ -153,7 +153,7 @@ export class ProductService {
 
     const invoiceDetailCount = await this._invoiceDetaillRepository.count({
       where: {
-        product: { id }, // sigue siendo number
+        product: { id },
       },
     });
 
