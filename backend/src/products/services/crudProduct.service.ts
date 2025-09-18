@@ -33,7 +33,6 @@ export class ProductService {
     try {
       const { categoryTypeId, ...productData } = createProductDto;
 
-      // Carga las entidades relacionadas
       const categoryType = await this._categoryTypeRepository.findOne({
         where: { id: categoryTypeId },
       });
@@ -72,14 +71,11 @@ export class ProductService {
       throw new NotFoundException(`Producto con ID ${id} no encontrado`);
     }
 
-    // Solo verificamos el código si se está intentando actualizar
     if (updateProductDto.code) {
-      // Buscamos si existe algún producto con ese código
       const codeExist = await this._productRepository.findOne({
         where: { code: updateProductDto.code },
       });
 
-      // Lanzamos error solo si encontramos un producto diferente con ese código
       if (codeExist && codeExist.id !== parsedId) {
         throw new HttpException(
           'El código ya está en uso por otro producto',

@@ -120,7 +120,7 @@ export class ServiceService {
       skip,
       take: params.perPage,
       order: { name: params.order ?? 'ASC' },
-      select: ['name'], // solo nombre
+      select: ['name'],
     });
 
     const items: PartialServiceDto[] = entities.map((e) => ({

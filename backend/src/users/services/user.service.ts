@@ -88,7 +88,6 @@ export class UserService {
       };
     }
 
-    // Búsqueda global
     if (params.search) {
       const searchConditions: FindOptionsWhere<User>[] = [
         { firstName: ILike(`%${params.search}%`) },
@@ -98,7 +97,6 @@ export class UserService {
         { phone: ILike(`%${params.search}%`) },
       ];
 
-      // Combinar condiciones base con cada condición de búsqueda
       searchConditions.forEach((condition) => {
         where.push({ ...baseConditions, ...condition });
       });

@@ -22,7 +22,6 @@ export class CrudProductService {
 
     const baseConditions: FindOptionsWhere<Product> = {};
 
-    // Filtros individuales
     if (params.name) {
       baseConditions.name = ILike(`%${params.name}%`);
     }
@@ -57,7 +56,6 @@ export class CrudProductService {
       };
     }
 
-    // Búsqueda global
     if (params.search) {
       const search = params.search.trim();
       const searchConditions: FindOptionsWhere<Product>[] = [
@@ -75,7 +73,6 @@ export class CrudProductService {
         );
       }
 
-      // Combina cada condición con los filtros base
       searchConditions.forEach((condition) => {
         where.push({ ...baseConditions, ...condition });
       });
@@ -137,7 +134,7 @@ export class CrudProductService {
       skip,
       take: params.perPage,
       order: { name: params.order ?? 'ASC' },
-      select: ['name'], // solo nombre
+      select: ['name'],
     });
 
     const items: PartialProductDto[] = entities.map((e) => ({
