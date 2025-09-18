@@ -1,0 +1,163 @@
+<!-- navigation.component.html -->
+<nav class="h-full">
+  <article class="flex w-full h-full justify-center items-center">
+    <section class="hidden md:flex gap-4 font-semibold">
+      <button
+        class="px-4 py-2 hover:bg-[#2979ff] rounded flex justify-start items-center gap-x-2"
+        routerLink="/"
+      >
+        <mat-icon>home</mat-icon>Inicio
+      </button>
+
+      <!-- Dropdown Clientes -->
+      <div class="relative">
+        <button
+          (click)="toggleDropdown('clientes', $event)"
+          class="px-4 py-2 hover:bg-[#2979ff] rounded flex justify-start items-center gap-x-2"
+        >
+          <mat-icon>persons</mat-icon>
+          Clientes
+          <mat-icon>expand_more</mat-icon>
+        </button>
+        <div
+          *ngIf="dropdowns.clientes"
+          class="absolute z-10 bg-[#2962ff] rounded-lg shadow-lg mt-4 min-w-[220px]"
+          (click)="$event.stopPropagation()"
+        >
+          <ul class="py-2 text-sm">
+            <li>
+              <a
+                routerLink="/organizational/users/create"
+                class="flex justify-start items-center px-4 py-2 hover:bg-[#2979ff] transition-colors duration-200 gap-x-2"
+                (click)="closeDropdowns()"
+              >
+                <mat-icon>person_add</mat-icon>
+                Crear un cliente
+              </a>
+            </li>
+            <li>
+              <a
+                routerLink="/organizational/users/list"
+                class="flex justify-start items-center px-4 py-2 hover:bg-[#2979ff] transition-colors duration-200 gap-x-2"
+                (click)="closeDropdowns()"
+              >
+                <mat-icon>group</mat-icon>
+                Ver mis clientes
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Dropdown Productos y Servicios -->
+      <div class="relative">
+        <button
+          (click)="toggleDropdown('productos', $event)"
+          class="px-4 py-2 hover:bg-[#2979ff] rounded flex justify-start items-center gap-x-2"
+        >
+          <mat-icon>store</mat-icon>
+          Productos y Servicios
+          <mat-icon>expand_more</mat-icon>
+        </button>
+        <div
+          *ngIf="dropdowns.productos"
+          class="absolute z-10 bg-[#2962ff] rounded-lg shadow-lg mt-4 min-w-[220px]"
+          (click)="$event.stopPropagation()"
+        >
+          <ul class="py-2 text-sm">
+            <li>
+              <a
+                routerLink="/crear-producto"
+                class="flex justify-start items-center px-4 py-2 hover:bg-[#2979ff] transition-colors duration-200 gap-x-2"
+                (click)="closeDropdowns()"
+              >
+                <mat-icon>add_shopping_cart</mat-icon>
+                Crear un producto
+              </a>
+            </li>
+            <li>
+              <a
+                routerLink="/ver-productos"
+                class="flex justify-start items-center px-4 py-2 hover:bg-[#2979ff] transition-colors duration-200 gap-x-2"
+                (click)="closeDropdowns()"
+              >
+                <mat-icon>shopping_cart</mat-icon>
+                Ver mis productos
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Dropdown Facturación -->
+      <div class="relative">
+        <button
+          (click)="toggleDropdown('facturacion', $event)"
+          class="px-4 py-2 hover:bg-[#2979ff] rounded flex justify-start items-center gap-x-2"
+        >
+          <mat-icon>note</mat-icon>
+          Facturación
+          <mat-icon>expand_more</mat-icon>
+        </button>
+        <div
+          *ngIf="dropdowns.facturacion"
+          class="absolute z-10 bg-[#2962ff] rounded-lg shadow-lg mt-4 min-w-[220px]"
+          (click)="$event.stopPropagation()"
+        >
+          <ul class="py-2 text-sm">
+            <li>
+              <a
+                routerLink="/factura-venta"
+                class="flex justify-start items-center px-4 py-2 hover:bg-[#2979ff] transition-colors duration-200 gap-x-2"
+                (click)="closeDropdowns()"
+                ><mat-icon>point_of_sale</mat-icon>
+                Crear factura de venta
+              </a>
+            </li>
+            <li>
+              <a
+                routerLink="/factura-compra"
+                class="flex justify-start items-center px-4 py-2 hover:bg-[#2979ff] transition-colors duration-200 gap-x-2"
+                (click)="closeDropdowns()"
+              >
+                <mat-icon>note_add</mat-icon>
+                Crear factura de compra
+              </a>
+            </li>
+            <li>
+              <a
+                routerLink="/cotizacion"
+                class="flex justify-start items-center px-4 py-2 hover:bg-[#2979ff] transition-colors duration-200 gap-x-2"
+                (click)="closeDropdowns()"
+              >
+                <mat-icon>request_quote</mat-icon>
+                Crear cotización
+              </a>
+            </li>
+            <li>
+              <a
+                routerLink="/ver-facturas"
+                class="flex justify-start items-center px-4 py-2 hover:bg-[#2979ff] transition-colors duration-200 gap-x-2"
+                (click)="closeDropdowns()"
+              >
+                <mat-icon>receipt_long</mat-icon>
+                Ver mis facturas y cotizaciones
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <button
+        class="px-4 py-2 hover:bg-[#2979ff] rounded flex justify-start items-center gap-x-2"
+      >
+        <mat-icon>trending_up</mat-icon>
+        Reportes financieros
+      </button>
+    </section>
+
+    <section class="flex md:hidden">
+      <!-- Aquí pondrías un menú hamburguesa para móviles -->
+    </section>
+  </article>
+</nav>

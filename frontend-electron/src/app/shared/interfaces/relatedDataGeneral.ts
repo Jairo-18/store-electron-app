@@ -35,7 +35,7 @@ export interface BedType {
 }
 
 export interface RoleType {
-  roleTypeId: string;
+  id: string;
   code?: string;
   name?: string;
   createdAt: Date;
@@ -44,7 +44,7 @@ export interface RoleType {
 }
 
 export interface PhoneCode {
-  phoneCodeId: string;
+  id: number;
   code?: string;
   name: string;
   createdAt: Date;
@@ -53,16 +53,7 @@ export interface PhoneCode {
 }
 
 export interface IdentificationType {
-  identificationTypeId: string;
-  code?: string;
-  name?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
-}
-
-export interface IdentificationType {
-  identificationTypeId: string;
+  id: number;
   code?: string;
   name?: string;
   createdAt: Date;
@@ -146,4 +137,10 @@ export interface TaxeType {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
+}
+
+export interface CreateUserRelatedData {
+  identificationType: IdentificationType[];
+  roleType: RoleType[];
+  phoneCode: PhoneCode[];
 }
