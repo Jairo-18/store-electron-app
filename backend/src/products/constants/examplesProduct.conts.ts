@@ -152,3 +152,68 @@ export const GET_PRODUCT_EXAMPLE = {
     name: 'Mecato',
   },
 };
+export const EXAMPLE_IMAGE = {
+  id: 4,
+  filePath:
+    'uploads\\products\\img_20240825_123242_037-1758372083408-988589162.jpg',
+  originalName: 'IMG_20240825_123242_037.jpg',
+  createdAt: new Date('2025-09-20T12:38:50.601Z'),
+  updatedAt: new Date('2025-09-20T12:41:23.495Z'),
+  deletedAt: null,
+  product: {
+    id: 6,
+    code: 'QWE',
+    name: 'QWEQW',
+    description: '',
+    amount: '23.00',
+    priceBuy: '0.00',
+    priceSale: '0.00',
+    isActive: true,
+    createdAt: new Date('2025-09-19T20:02:05.519Z'),
+    updatedAt: new Date('2025-09-19T23:21:04.537Z'),
+    deletedAt: null,
+    images: [
+      {
+        id: 4,
+        filePath:
+          'uploads\\products\\img_20240825_123242_037-1758372083408-988589162.jpg',
+        originalName: 'IMG_20240825_123242_037.jpg',
+        createdAt: new Date('2025-09-20T12:38:50.601Z'),
+        updatedAt: new Date('2025-09-20T12:41:23.495Z'),
+        deletedAt: null,
+      },
+      {
+        id: 6,
+        filePath:
+          'uploads\\products\\img_20230813_195215-1758373046035-360454635.jpg',
+        originalName: 'IMG_20230813_195215.jpg',
+        createdAt: new Date('2025-09-20T12:57:26.062Z'),
+        updatedAt: new Date('2025-09-20T12:57:26.062Z'),
+        deletedAt: null,
+      },
+    ],
+  },
+};
+
+export const EXAMPLE_IMAGE_BY_ID = {
+  images: [
+    {
+      id: 4,
+      filePath:
+        'uploads\\products\\img_20240825_123242_037-1758372083408-988589162.jpg',
+      originalName: 'IMG_20240825_123242_037.jpg',
+      createdAt: new Date('2025-09-20T12:38:50.601Z'),
+      updatedAt: new Date('2025-09-20T12:41:23.495Z'),
+      deletedAt: null,
+    },
+    {
+      id: 6,
+      filePath:
+        'uploads\\products\\img_20230813_195215-1758373046035-360454635.jpg',
+      originalName: 'IMG_20230813_195215.jpg',
+      createdAt: new Date('2025-09-20T12:57:26.062Z'),
+      updatedAt: new Date('2025-09-20T12:57:26.062Z'),
+      deletedAt: null,
+    },
+  ],
+};

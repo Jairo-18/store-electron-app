@@ -36,6 +36,8 @@ import { BalanceRepository } from './repositories/balance.repository';
 import { Balance } from './entities/balance.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { GeneralInvoiceDetaillService } from './services/generalInvoiceDetaill.service';
+import { ImageProduct } from './entities/imageProduct.entity';
+import { ImageRepository } from './repositories/image.repository';
 
 @Module({})
 export class SharedModule {
@@ -99,6 +101,7 @@ export class SharedModule {
           TaxeType,
           User,
           Service,
+          ImageProduct,
         ]),
       ],
       controllers: [],
@@ -121,6 +124,7 @@ export class SharedModule {
         InvoiceEventsListener,
         GeneralInvoiceDetaillService,
         ServiceRepository,
+        ImageRepository,
       ],
       exports: [
         TypeOrmModule,
@@ -143,6 +147,7 @@ export class SharedModule {
         InvoiceEventsListener,
         GeneralInvoiceDetaillService,
         ServiceRepository,
+        ImageRepository,
       ],
     };
   }

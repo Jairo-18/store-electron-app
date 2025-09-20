@@ -34,5 +34,5 @@ export class BasePageComponent {
   @Input() showActions: boolean = true;
   @Input() showContentTitle: boolean = false;
   @Input() showContentInfo: boolean = false;
-  @Input() showBorder: boolean = true;
+  @Input() showBorder: boolean = false;
 }

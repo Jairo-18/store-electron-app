@@ -135,7 +135,7 @@ export class ProductController {
     return {
       title: 'Eliminar producto',
       statusCode: HttpStatus.OK,
-      message: 'Producto eliminado exitosamente',
+      message: 'Producto eliminado correctamente',
     };
   }
 }

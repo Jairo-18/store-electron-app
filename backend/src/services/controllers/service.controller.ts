@@ -124,7 +124,7 @@ export class ServiceController {
     return {
       title: 'Eliminar servicio',
       statusCode: HttpStatus.OK,
-      message: 'Servicio eliminado exitosamente',
+      message: 'Servicio eliminado correctamente',
     };
   }
 }

@@ -33,6 +33,7 @@ import { join } from 'path';
 import * as express from 'express';
 import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
 import { AppDataSource } from 'typeorm.config';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 // 👇 Importa tu DataSource central
 
@@ -52,8 +53,9 @@ async function bootstrap() {
     }
   }
 
-  // 👉 Arranque normal de NestJS
-  const app = await NestFactory.create(AppModule, { bufferLogs: false });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bufferLogs: false,
+  });
   app.use(bodyParser.urlencoded({ extended: true }));
   const configService = app.get(ConfigService);
   const swaggerUser = configService.get<string>('swagger.user');
@@ -104,6 +106,10 @@ async function bootstrap() {
       contentSecurityPolicy: false,
     }),
   );
+
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads/',
+  });
 
   app.use(
     '/docs',
