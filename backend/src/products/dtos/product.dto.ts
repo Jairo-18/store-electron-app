@@ -1,3 +1,6 @@
+import { BaseResponseDto } from './../../shared/dtos/response.dto';
+import { CategoryTypeClean } from './../../shared/interfaces/typesClean.interface';
+import { HttpStatus } from '@nestjs/common';
 import { ParamsPaginationDto } from './../../shared/dtos/pagination.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional } from 'class-validator';
@@ -93,4 +96,32 @@ export class PartialProductDto {
     description: 'Nombre del producto',
   })
   name: string;
+}
+export interface CreateRelatedDataServicesAndProductsDto {
+  categoryType: CategoryTypeClean[];
+}
+export class CreateRelatedDataServicesAndProductsResponseDto
+  implements BaseResponseDto
+{
+  @ApiProperty({ type: Number, example: HttpStatus.OK })
+  statusCode: number;
+
+  @ApiProperty({
+    type: Object,
+    example: {
+      categoryType: [
+        {
+          id: '1',
+          code: 'MEC',
+          name: 'MECATO',
+        },
+        {
+          id: '2',
+          code: 'BAR',
+          name: 'BAR',
+        },
+      ],
+    },
+  })
+  data: CreateRelatedDataServicesAndProductsDto;
 }

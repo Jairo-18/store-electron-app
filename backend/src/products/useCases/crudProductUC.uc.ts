@@ -6,8 +6,8 @@ import { CreateProductDto, UpdateProductDto } from '../dtos/crudProduct.dto';
 export class CrudProductUC {
   constructor(private readonly _productService: ProductService) {}
 
-  async create(id: CreateProductDto) {
-    return await this._productService.create(id);
+  async create(createProductDto: CreateProductDto) {
+    return await this._productService.create(createProductDto);
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {

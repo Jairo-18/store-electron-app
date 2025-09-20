@@ -72,7 +72,6 @@ export class SeeUsersComponent implements OnInit {
     'isActive',
     'actions'
   ];
-
   dataSource = new MatTableDataSource<UserComplete>([]);
   roleType: RoleType[] = [];
   identificationType: IdentificationType[] = [];
@@ -92,13 +91,10 @@ export class SeeUsersComponent implements OnInit {
     hasNextPage: false
   };
 
-  /**
-   * @param searchFields - Creación del buscador.
-   */
   searchFields: SearchField[] = [
     {
       name: 'search',
-      label: 'Nombre, apellido o identificación',
+      label: 'Nombre, apellido, identificación o teléfono',
       type: 'text',
       placeholder: ' '
     },
@@ -134,9 +130,6 @@ export class SeeUsersComponent implements OnInit {
     }
   ];
 
-  /**
-   * @param ngOnInit - Inicialización de las funciones.
-   */
   ngOnInit(): void {
     this.loadUsers();
     this.getDataForFields();
@@ -147,9 +140,6 @@ export class SeeUsersComponent implements OnInit {
     if (this.isMobile) this.paginationParams.perPage = 5;
   }
 
-  /**
-   * @param _getDataForFields - Obtiene los select de roles y tipos de identificación.
-   */
   private getDataForFields(): void {
     this.loading = true;
     this._relatedDataService.createUserRelatedData().subscribe({
@@ -157,12 +147,9 @@ export class SeeUsersComponent implements OnInit {
         const role = res.data?.roleType || [];
         const identificationType = res.data?.identificationType || [];
         const phoneCode = res.data?.phoneCode || [];
-
-        // Guardar para uso en los métodos getXXXName
         this.roleType = role;
         this.identificationType = identificationType;
         this.phoneCode = phoneCode;
-
         const roleOption = this.searchFields.find(
           (field) => field.name === 'roleType'
         );
@@ -172,21 +159,18 @@ export class SeeUsersComponent implements OnInit {
         const phoneCodeOption = this.searchFields.find(
           (field) => field.name === 'phoneCode'
         );
-
         if (roleOption) {
           roleOption.options = role.map((role) => ({
             value: role.id,
             label: role.name || ''
           }));
         }
-
         if (identificationTypeOption) {
           identificationTypeOption.options = identificationType.map((type) => ({
             value: type.id,
             label: type.name || ''
           }));
         }
-
         if (phoneCodeOption) {
           phoneCodeOption.options = phoneCode.map((type) => ({
             value: type.id,
@@ -214,27 +198,18 @@ export class SeeUsersComponent implements OnInit {
     return phoneCode ? `${phoneCode.code} - ${phoneCode.name}` : '';
   }
 
-  /**
-   * @param onSearchSubmit - Botón de búsqueda.
-   */
   onSearchSubmit(values: any): void {
     this.params = values;
     this.paginationParams.page = 1;
     this.loadUsers();
   }
 
-  /**
-   * @param onChangePagination - Cambio de paginación.
-   */
   onChangePagination(event: PageEvent): void {
     this.paginationParams.page = event.pageIndex + 1;
     this.paginationParams.perPage = event.pageSize;
     this.loadUsers();
   }
 
-  /**
-   * @param onTabChange - Cambio de tabla.
-   */
   onTabChange(index: number): void {
     this.selectedTabIndex = index;
   }
@@ -245,17 +220,10 @@ export class SeeUsersComponent implements OnInit {
     this.loadUsers();
   }
 
-  /**
-   * @param goToCreateUser - Ir a crear usuarios
-   */
   goToCreateUser(): void {
     this._router.navigate(['/users/create']);
   }
 
-  /**
-   * @param loadUsers - Carga de usuarios.
-   * @param getUserWithPagination - Obtiene los usuarios con paginación.
-   */
   loadUsers(filter: string = ''): void {
     this.loading = true;
     const query = {
@@ -264,7 +232,6 @@ export class SeeUsersComponent implements OnInit {
       search: filter,
       ...this.params
     };
-
     this._usersService.getUserWithPagination(query).subscribe({
       next: (res) => {
         this.dataSource.data = (res.data || []).sort((a, b) =>
@@ -280,9 +247,6 @@ export class SeeUsersComponent implements OnInit {
     });
   }
 
-  /**
-   * @param _deleteUser - Ellimina un usuario.
-   */
   private deleteUser(id: string): void {
     this.loading = true;
     this._usersService.deleteUserPanel(id).subscribe({
@@ -297,9 +261,6 @@ export class SeeUsersComponent implements OnInit {
     });
   }
 
-  /**
-   * @param openDeleteUserDialog - Abre un modal para eliminar un usuario.
-   */
   openDeleteUserDialog(id: string): void {
     const dialogRef = this._matDialog.open(YesNoDialogComponent, {
       data: {
@@ -307,7 +268,6 @@ export class SeeUsersComponent implements OnInit {
         message: 'Esta acción no se puede deshacer.'
       }
     });
-
     dialogRef.afterClosed().subscribe((confirm) => {
       if (confirm) {
         this.deleteUser(id);

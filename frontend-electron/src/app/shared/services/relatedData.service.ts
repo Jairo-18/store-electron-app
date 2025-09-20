@@ -3,7 +3,10 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponseInterface } from '../interfaces/api-response.interface';
 import { environment } from '../../../environments/environment';
-import { CreateUserRelatedData } from '../interfaces/relatedDataGeneral';
+import {
+  CreateProductAndServiceRelatedData,
+  CreateUserRelatedData
+} from '../interfaces/relatedDataGeneral';
 
 @Injectable({
   providedIn: 'root'
@@ -17,5 +20,13 @@ export class RelatedDataService {
     return this._httpClient.get<ApiResponseInterface<CreateUserRelatedData>>(
       `${environment.apiUrl}user/create/related-data`
     );
+  }
+
+  createProductAndServiceRelatedData(): Observable<
+    ApiResponseInterface<CreateProductAndServiceRelatedData>
+  > {
+    return this._httpClient.get<
+      ApiResponseInterface<CreateProductAndServiceRelatedData>
+    >(`${environment.apiUrl}product/create/related-data`);
   }
 }

@@ -1,3 +1,4 @@
+import { CreateRelatedDataServicesAndProductsResponseDto } from './../dtos/product.dto';
 import { Product } from './../../shared/entities/product.entity';
 import { ResponsePaginationDto } from './../../shared/dtos/pagination.dto';
 import {
@@ -54,6 +55,16 @@ export class ProductController {
     @Query() params: PaginatedProductSelectParamsDto,
   ): Promise<ResponsePaginationDto<PartialProductDto>> {
     return this._productUC.paginatedPartialProduct(params);
+  }
+
+  @Get('/create/related-data')
+  @ApiOkResponse({ type: CreateRelatedDataServicesAndProductsResponseDto })
+  async getRelatedData(): Promise<CreateRelatedDataServicesAndProductsResponseDto> {
+    const data = await this._productUC.getRelatedDataToCreate();
+    return {
+      statusCode: HttpStatus.OK,
+      data,
+    };
   }
 
   @Post('create')
@@ -119,10 +130,8 @@ export class ProductController {
   @Delete(':id')
   @ApiOkResponse({ type: DeleteReCordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
-  async delete(
-    @Param('id') producId: number,
-  ): Promise<DeleteReCordResponseDto> {
-    await this._crudProductUC.delete(producId);
+  async delete(@Param('id') id: number): Promise<DeleteReCordResponseDto> {
+    await this._crudProductUC.delete(id);
     return {
       title: 'Eliminar producto',
       statusCode: HttpStatus.OK,

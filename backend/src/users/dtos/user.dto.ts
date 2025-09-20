@@ -28,21 +28,21 @@ export class CreateUserRelatedDataReponseDto {
         {
           id: '7ec4336b-2131-426c-80f4-c1c3a7b5ccc0',
           code: 'ADM',
-          name: 'Administrador',
+          name: 'ADMINISTRADOR',
         },
         {
           id: '48e2bd67-6c7f-40fa-acc6-b57c55b7617e',
           code: 'CLI',
-          name: 'Cliente',
+          name: 'CLIENTE',
         },
       ],
       identificationType: [
-        { id: '1', code: 'CC', name: 'Cédula de ciudadanía' },
-        { id: '2', code: 'TI', name: 'Tarjeta de identidad' },
+        { id: '1', code: 'CC', name: 'CEDULA DE CIUDADANIA' },
+        { id: '2', code: 'TI', name: 'TARJETA DE IDENTIDAD' },
       ],
       phoneCode: [
-        { id: '11', code: '+57', name: 'Colombia' },
-        { id: '2', code: '+1', name: 'Estados Unidos' },
+        { id: '11', code: '+57', name: 'COLOMBIA' },
+        { id: '2', code: '+1', name: 'EE.UU' },
       ],
     },
   })

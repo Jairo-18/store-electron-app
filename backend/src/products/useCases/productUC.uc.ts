@@ -9,6 +9,10 @@ import { CrudProductService } from '../services/product.service';
 export class ProductUC {
   constructor(private _crudProductService: CrudProductService) {}
 
+  async getRelatedDataToCreate() {
+    return await this._crudProductService.getRelatedDataToCreate();
+  }
+
   async paginatedList(params: PaginatedListProductsParamsDto) {
     return await this._crudProductService.paginatedList(params);
   }

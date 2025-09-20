@@ -22,6 +22,13 @@ export const routes: Routes = [
           import('./organizational/organizational.routes').then(
             (m) => m.organizationalRoutes
           )
+      },
+      {
+        path: 'service-and-product',
+        loadChildren: () =>
+          import('./service-and-product/service-and-product.routes').then(
+            (m) => m.serviceAndProductRoutes
+          )
       }
     ]
   },

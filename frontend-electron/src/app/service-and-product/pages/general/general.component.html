@@ -1,0 +1,36 @@
+<app-base-page>
+  <mat-tab-group>
+    <mat-tab label="Productos">
+      <ng-template matTabContent>
+        <app-create-or-edit-product
+          [categoryTypes]="categoryTypes"
+          (productSaved)="reloadProducts(); tabGroup.selectedIndex = 0"
+          [currentProduct]="currentProduct"
+        ></app-create-or-edit-product>
+
+        <app-see-products
+          [searchFieldsProducts]="searchFieldsProducts"
+          [categoryTypes]="categoryTypes"
+          (productSelected)="currentProduct = $event; goToTop()"
+          (productClean)="cleanProduct()"
+        ></app-see-products
+      ></ng-template>
+    </mat-tab>
+    <mat-tab label="Servicios">
+      <ng-template matTabContent>
+        <app-create-or-edit-service
+          [categoryTypes]="categoryTypes"
+          (serviceSaved)="reloadServices(); tabGroup.selectedIndex = 1"
+          [currentService]="currentService"
+        ></app-create-or-edit-service>
+
+        <app-see-services
+          [categoryTypes]="categoryTypes"
+          [searchFieldsServices]="searchFieldsServices"
+          (serviceSelect)="currentService = $event; goToTop()"
+          (serviceClean)="cleanServices()"
+        ></app-see-services
+      ></ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</app-base-page>

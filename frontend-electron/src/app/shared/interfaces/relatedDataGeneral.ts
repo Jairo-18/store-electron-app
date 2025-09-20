@@ -8,7 +8,7 @@ export interface TypeForEditResponse<T extends CreateType> {
 }
 
 export interface CategoryType {
-  categoryTypeId: number;
+  id: number;
   code?: string;
   name: string;
   createdAt: Date;
@@ -143,4 +143,8 @@ export interface CreateUserRelatedData {
   identificationType: IdentificationType[];
   roleType: RoleType[];
   phoneCode: PhoneCode[];
+}
+
+export interface CreateProductAndServiceRelatedData {
+  categoryType: CategoryType[];
 }

@@ -3,10 +3,7 @@ import { User } from './../../shared/entities/user.entity';
 import { ResponsePaginationDto } from './../../shared/dtos/pagination.dto';
 import { PageMetaDto } from './../../shared/dtos/pageMeta.dto';
 import { UserRepository } from './../../shared/repositories/user.repository';
-import { PhoneCode } from './../../shared/entities/phoneCode.entity';
 import { RepositoryService } from '../../shared/services/repositoriry.service';
-import { RoleType } from '../../shared/entities/roleType.entity';
-import { IdentificationType } from '../../shared/entities/identificationType.entity';
 import { Injectable } from '@nestjs/common';
 
 import { Equal, FindOptionsWhere, ILike } from 'typeorm';
@@ -25,16 +22,19 @@ export class UserService {
 
   async getRelatedDataToCreate(): Promise<CreateUserRelatedDataDto> {
     const identificationType =
-      await this._repositoriesService.getEntities<IdentificationType>(
-        this._repositoriesService.repositories.identificationType,
-      );
+      await this._repositoriesService.repositories.identificationType.find({
+        select: ['id', 'name', 'code'],
+      });
 
-    const phoneCode = await this._repositoriesService.getEntities<PhoneCode>(
-      this._repositoriesService.repositories.phoneCode,
-    );
+    const phoneCode =
+      await this._repositoriesService.repositories.phoneCode.find({
+        select: ['id', 'name', 'code'],
+      });
 
-    const roleType = await this._repositoriesService.getEntities<RoleType>(
-      this._repositoriesService.repositories.roleType,
+    const roleType = await this._repositoriesService.repositories.roleType.find(
+      {
+        select: ['id', 'name', 'code'],
+      },
     );
 
     return { identificationType, roleType, phoneCode };

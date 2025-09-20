@@ -39,7 +39,7 @@ export class PaginationPartialService {
     }>(`${environment.apiUrl}user/paginated-partial`, { params });
   }
 
-  getAccommodationPartial(query: object): Observable<{
+  getServicePartial(query: object): Observable<{
     pagination: PaginationInterface;
     data: GeneralPartial[];
   }> {
@@ -47,17 +47,6 @@ export class PaginationPartialService {
     return this._httpClient.get<{
       pagination: PaginationInterface;
       data: GeneralPartial[];
-    }>(`${environment.apiUrl}accommodation/paginated-partial`, { params });
-  }
-
-  getExcursionPartial(query: object): Observable<{
-    pagination: PaginationInterface;
-    data: GeneralPartial[];
-  }> {
-    const params = this._httpUtilities.httpParamsFromObject(query);
-    return this._httpClient.get<{
-      pagination: PaginationInterface;
-      data: GeneralPartial[];
-    }>(`${environment.apiUrl}excursion/paginated-partial`, { params });
+    }>(`${environment.apiUrl}service/paginated-partial`, { params });
   }
 }
