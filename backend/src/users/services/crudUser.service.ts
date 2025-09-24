@@ -244,7 +244,7 @@ export class CrudUserService {
     const user = await this.findOne(id);
 
     const existsInInvoices = await this._invoiceRepository.exist({
-      where: [{ user: { id } }, { employee: { id } }],
+      where: [{ user: { id } }],
     });
 
     if (existsInInvoices) {

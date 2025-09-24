@@ -7,7 +7,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ProductModule } from './products/product.module';
 import { UserModule } from './users/user.module';
-import { ServiceModule } from './services/service.module';
+import { InvoiceModule } from './invoices/invoice.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { ServiceModule } from './services/service.module';
     }),
     ProductModule,
     UserModule,
-    ServiceModule,
+    InvoiceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

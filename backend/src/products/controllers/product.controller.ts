@@ -100,7 +100,6 @@ export class ProductController {
     @Body() updateProductDto: UpdateProductDto,
   ): Promise<UpdateRecordResponseDto> {
     await this._crudProductUC.update(id, updateProductDto);
-
     return {
       title: 'Actualizar producto',
       message: 'Producto actualizado correctamente',

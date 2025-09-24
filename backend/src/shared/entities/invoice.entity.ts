@@ -36,10 +36,6 @@ export class Invoice {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'employeeId' })
-  employee: User;
-
   @ManyToOne(() => PaidType)
   @JoinColumn({ name: 'paidTypeId' })
   paidType?: PaidType;
