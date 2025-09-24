@@ -29,8 +29,8 @@ import { ServiceComplete } from '../../interface/service.interface';
     MatTabsModule,
     SeeProductsComponent,
     CreateOrEditProductComponent,
-    CreateOrEditServiceComponent,
-    SeeServicesComponent,
+    // CreateOrEditServiceComponent,
+    // SeeServicesComponent,
     BasePageComponent
   ],
   templateUrl: './general.component.html',

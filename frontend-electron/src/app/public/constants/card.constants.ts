@@ -11,8 +11,8 @@ export const DASHBOARD_CARDS: DashboardCard[] = [
   },
   {
     icon: 'store',
-    title: 'Productos y Servicios',
-    description: 'Gestión de productos y servicios',
+    title: 'Productos',
+    description: 'Gestión de productos',
     route: '/service-and-product/general',
     queryParams: { editProduct: true },
     iconNext: 'navigate_next',
