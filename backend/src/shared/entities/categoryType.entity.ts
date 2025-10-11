@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Product } from './product.entity';
 import { Service } from './services.entity';
+import { Accommodation } from './accommodation.entity';
 
 @Entity({ name: 'CategoryType' })
 export class CategoryType {
@@ -26,6 +27,16 @@ export class CategoryType {
     onUpdate: 'CASCADE',
   })
   product: Product[];
+
+  @OneToMany(
+    () => Accommodation,
+    (accommodation) => accommodation.categoryType,
+    {
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
+  accommodation: Accommodation[];
 
   @OneToMany(() => Service, (service) => service.categoryType, {
     onDelete: 'CASCADE',

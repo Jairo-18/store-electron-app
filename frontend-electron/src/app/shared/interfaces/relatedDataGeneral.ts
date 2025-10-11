@@ -16,24 +16,6 @@ export interface CategoryType {
   deletedAt: Date;
 }
 
-export interface StateType {
-  stateTypeId: number;
-  code?: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date;
-}
-
-export interface BedType {
-  bedTypeId: number;
-  code?: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date;
-}
-
 export interface RoleType {
   id: string;
   code?: string;
@@ -62,7 +44,7 @@ export interface IdentificationType {
 }
 
 export interface PayType {
-  payTypeId: string;
+  id: string;
   code?: string;
   name?: string;
   createdAt: Date;
@@ -71,7 +53,7 @@ export interface PayType {
 }
 
 export interface PaidType {
-  paidTypeId: string;
+  id: string;
   code?: string;
   name?: string;
   createdAt: Date;
@@ -80,7 +62,7 @@ export interface PaidType {
 }
 
 export interface InvoiceType {
-  invoiceTypeId: string;
+  id: string;
   code?: string;
   name?: string;
   createdAt: Date;
@@ -109,28 +91,8 @@ export interface TypeItem {
   [key: string]: any;
 }
 
-export interface AdditionalType {
-  additionalTypeId: number;
-  code: string;
-  name: string;
-  value: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date;
-}
-
-export interface DiscountType {
-  discountTypeId: number;
-  code: string;
-  name: string;
-  percent: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date;
-}
-
 export interface TaxeType {
-  taxeTypeId: number;
+  id: number;
   code?: string;
   name?: string;
   percentage?: string;

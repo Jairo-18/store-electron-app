@@ -97,7 +97,6 @@ export class GeneralComponent implements AfterViewInit, OnInit {
     this._relatedDataService.createProductAndServiceRelatedData().subscribe({
       next: (res) => {
         this.categoryTypes = res.data?.categoryType || [];
-
         this.updateCategoryTypeOptions();
       },
       error: (err) => console.error('Error al cargar datos de select:', err)

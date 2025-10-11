@@ -167,7 +167,7 @@ export class UserMiniDto {
     example: 'eae05031-a181-4175-b09c-90177ef87f9b',
     description: 'ID de usuario',
   })
-  userId: string;
+  id: string;
 
   @ApiProperty({
     example: 'MIGUEL CAMILO',

@@ -1,5 +1,4 @@
-import { CategoryTypeClean } from '../../shared/interfaces/typesClean.interface';
-
+import { CategoryTypeClean } from './../../shared/interfaces/types-clean.interface';
 export interface ServiceInterfacePaginatedList {
   id: number;
   code?: string;

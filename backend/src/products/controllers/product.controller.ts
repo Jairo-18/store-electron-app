@@ -8,7 +8,6 @@ import {
   NotFoundResponseDto,
   UpdateRecordResponseDto,
 } from './../../shared/dtos/response.dto';
-
 import {
   Body,
   Controller,

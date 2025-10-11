@@ -1,0 +1,157 @@
+<!-- CONTENEDOR A IMPRIMIR -->
+<article #pdfWrapper class="invoice-pdf">
+  <section class="invoice-header">
+    <div class="invoice-logo">
+      <img src="assets/images/Logo Samawe.png" alt="Logo" />
+    </div>
+    <div class="invoice-info">
+      <div class="row">
+        <div class="col">
+          <span>NIT: <span class="value">9013501728</span></span>
+        </div>
+        <div class="col">
+          <span>
+            {{ invoiceData.invoiceType.name }} #:
+            <span class="value">{{ invoiceData.code }}</span>
+          </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <span>
+            Dirección <span class="value">Vereda Pueblo Viejo - Aut 21</span>
+          </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <span>
+            Cliente:
+            <span class="value">
+              {{ invoiceData.user.firstName }} {{ invoiceData.user.lastName }}
+            </span>
+          </span>
+        </div>
+        <div class="col">
+          <span>
+            Fecha de impresión:
+            <span class="value">
+              {{ printDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="separator"></div>
+
+  <table *ngIf="invoiceData?.invoiceDetaills">
+    <thead>
+      <tr>
+        <th>Nro°</th>
+        <th>Item</th>
+        <th>Und</th>
+        <th>Precio</th>
+        <th>Impuesto</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="invoiceData.invoiceDetaills.length === 0">
+        <td colspan="6" class="no-data">No hay productos registrados</td>
+      </tr>
+      <tr *ngFor="let detail of invoiceData.invoiceDetaills; let i = index">
+        <td class="text-left">{{ i + 1 }}</td>
+        <td class="text-left">
+          {{ detail.product?.name || 'N/A' }}
+        </td>
+        <td class="text-center">{{ detail.amount || 0 }}</td>
+        <td class="text-right">
+          {{ detail?.priceWithoutTax ?? 0 | formatCop }}
+        </td>
+        <td class="text-right">
+          {{ detail.product?.taxe || 0 | formatCop }}
+        </td>
+        <td class="text-right">{{ detail?.subtotal ?? 0 | formatCop }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <section class="invoice-totals">
+    <div class="separator"></div>
+
+    @if (invoiceData.cash && invoiceData.cash > 0) {
+    <div class="row">
+      <div class="col-left"><span class="label">Efectivo:</span></div>
+      <div class="col-right">
+        <span class="highlight">{{ invoiceData.cash || '' | formatCop }}</span>
+      </div>
+    </div>
+    } @if (invoiceData.transfer && invoiceData.transfer > 0) {
+    <div class="row">
+      <div class="col-left"><span class="label">Transferencia:</span></div>
+      <div class="col-right">
+        <span class="highlight">{{
+          invoiceData.transfer || '' | formatCop
+        }}</span>
+      </div>
+    </div>
+    }
+
+    <div class="row">
+      <div class="col-left"><span class="label">Estado de pago:</span></div>
+      <div class="col-right">
+        <span
+          class="status"
+          [ngClass]="{
+            paid: invoiceData.paidType?.name?.toUpperCase()?.includes('PAGADO'),
+            pending:
+              invoiceData.paidType?.name
+                ?.toUpperCase()
+                ?.includes('PENDIENTE') || ''
+          }"
+        >
+          {{ invoiceData.paidType?.name || '' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-left"><span class="label">Tipo de pago:</span></div>
+      <div class="col-right">
+        <span>{{ invoiceData.payType?.name || '' }}</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-left">
+        <span class="label">Subtotal sin impuestos:</span>
+      </div>
+      <div class="col-right">
+        <span>{{ invoiceData.subtotalWithoutTax ?? 0 | formatCop }}</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-left"><span class="label">Impuestos:</span></div>
+      <div class="col-right">
+        <span>{{ invoiceData.totalTaxes ?? 0 | formatCop }}</span>
+      </div>
+    </div>
+
+    <div class="row total">
+      <div class="col-left"><span class="label">Total:</span></div>
+      <div class="col-right">
+        <span class="highlight">{{ invoiceData.total ?? 0 | formatCop }}</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>
+      "Gracias por su compañía - Factura generada por Samawe Putumayo S A S
+      Zomac"
+    </span>
+  </footer>
+</article>

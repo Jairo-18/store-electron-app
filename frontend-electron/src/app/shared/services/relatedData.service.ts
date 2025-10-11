@@ -7,6 +7,7 @@ import {
   CreateProductAndServiceRelatedData,
   CreateUserRelatedData
 } from '../interfaces/relatedDataGeneral';
+import { createInvoiceRelatedData } from '../../invoices/interface/invoice.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -28,5 +29,13 @@ export class RelatedDataService {
     return this._httpClient.get<
       ApiResponseInterface<CreateProductAndServiceRelatedData>
     >(`${environment.apiUrl}product/create/related-data`);
+  }
+
+  createInvoiceRelatedData(): Observable<
+    ApiResponseInterface<createInvoiceRelatedData>
+  > {
+    return this._httpClient.get<ApiResponseInterface<createInvoiceRelatedData>>(
+      `${environment.apiUrl}invoices/create/related-data`
+    );
   }
 }

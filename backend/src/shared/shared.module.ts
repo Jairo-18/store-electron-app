@@ -36,8 +36,16 @@ import { BalanceRepository } from './repositories/balance.repository';
 import { Balance } from './entities/balance.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { GeneralInvoiceDetaillService } from './services/generalInvoiceDetaill.service';
-import { ImageProduct } from './entities/imageProduct.entity';
-import { ImageRepository } from './repositories/image.repository';
+import { Accommodation } from './entities/accommodation.entity';
+import { AdditionalType } from './entities/additionalType.entity';
+import { BedType } from './entities/bedType.entity';
+import { DiscountType } from './entities/discountType.entity';
+import { StateType } from './entities/stateType.entity';
+import { AccommodationRepository } from './repositories/accommodation.repository';
+import { AdditionalTypeRepository } from './repositories/additionalType.repository';
+import { BedTypeRepository } from './repositories/bedType.repository';
+import { DiscountTypeRepository } from './repositories/discount.repository';
+import { StateTypeRepository } from './repositories/stateType.repository';
 
 @Module({})
 export class SharedModule {
@@ -101,7 +109,11 @@ export class SharedModule {
           TaxeType,
           User,
           Service,
-          ImageProduct,
+          Accommodation,
+          AdditionalType,
+          BedType,
+          DiscountType,
+          StateType,
         ]),
       ],
       controllers: [],
@@ -124,7 +136,11 @@ export class SharedModule {
         InvoiceEventsListener,
         GeneralInvoiceDetaillService,
         ServiceRepository,
-        ImageRepository,
+        AccommodationRepository,
+        AdditionalTypeRepository,
+        BedTypeRepository,
+        DiscountTypeRepository,
+        StateTypeRepository,
       ],
       exports: [
         TypeOrmModule,
@@ -147,7 +163,11 @@ export class SharedModule {
         InvoiceEventsListener,
         GeneralInvoiceDetaillService,
         ServiceRepository,
-        ImageRepository,
+        AccommodationRepository,
+        AdditionalTypeRepository,
+        BedTypeRepository,
+        DiscountTypeRepository,
+        StateTypeRepository,
       ],
     };
   }

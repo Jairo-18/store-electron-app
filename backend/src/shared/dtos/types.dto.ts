@@ -67,7 +67,7 @@ export class PayTypeDto extends BaseTypeDto {
     example: 2,
     description: 'ID del tipo de pago (PayType)',
   })
-  payTypeId: number;
+  id: number;
 
   @ApiProperty({
     example: 'PAG',
@@ -87,7 +87,7 @@ export class InvoiceTypeDto extends BaseTypeDto {
     example: 2,
     description: 'ID del tipo de factura (InvoiceType)',
   })
-  invoiceTypeId: number;
+  id: number;
 
   @ApiProperty({
     example: 'FV',
@@ -107,7 +107,7 @@ export class PaidTypeDto extends BaseTypeDto {
     example: 2,
     description: 'ID del tipo de estado pago (PaidType)',
   })
-  paidTypeId: number;
+  id: number;
 
   @ApiProperty({
     example: 'EFE',
@@ -127,7 +127,7 @@ export class CategoryTypeDto extends BaseTypeDto {
     example: 2,
     description: 'ID del tipo de estado pago (CategoryType)',
   })
-  categoryTypeId: number;
+  id: number;
 
   @ApiProperty({
     example: 'MEC',
@@ -147,7 +147,7 @@ export class TaxeTypeDto {
     example: 2,
     description: 'ID del tipo de impuesto (TaxeType)',
   })
-  taxeTypeId: number;
+  id: number;
 
   @ApiProperty({
     example: 'IVA',

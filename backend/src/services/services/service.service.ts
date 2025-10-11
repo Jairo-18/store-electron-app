@@ -87,7 +87,7 @@ export class ServiceService {
       priceSale: service.priceSale,
       categoryType: service.categoryType
         ? {
-            categoryTypeId: service.categoryType.id,
+            id: service.categoryType.id,
             code: service.categoryType.code,
             name: service.categoryType.name,
           }

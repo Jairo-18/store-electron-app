@@ -349,27 +349,27 @@ export class InvoiceService {
       totalTaxes: Number(totalTaxes),
       invoiceType: invoice.invoiceType
         ? {
-            invoiceTypeId: invoice.invoiceType.id,
+            id: invoice.invoiceType.id,
             code: invoice.invoiceType.code,
             name: invoice.invoiceType.name,
           }
         : undefined,
       payType: invoice.payType
         ? {
-            payTypeId: invoice.payType.id,
+            id: invoice.payType.id,
             code: invoice.payType.code,
             name: invoice.payType.name,
           }
         : undefined,
       paidType: invoice.paidType
         ? {
-            paidTypeId: invoice.paidType.id,
+            id: invoice.paidType.id,
             code: invoice.paidType.code,
             name: invoice.paidType.name,
           }
         : undefined,
       user: invoice.user && {
-        userId: invoice.user.id,
+        id: invoice.user.id,
         firstName: invoice.user.firstName,
         lastName: invoice.user.lastName,
         identificationNumber: invoice.user.identificationNumber,

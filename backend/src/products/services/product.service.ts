@@ -113,7 +113,7 @@ export class CrudProductService {
         priceSale: product.priceSale,
         categoryType: product.categoryType
           ? {
-              categoryTypeId: product.categoryType.id,
+              id: product.categoryType.id,
               code: product.categoryType.code,
               name: product.categoryType.name,
             }

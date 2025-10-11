@@ -29,6 +29,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
+  z-index: 1;
   flex-direction: column;
 
   &.mobile-margin-left {
@@ -39,9 +40,6 @@
       margin-left: 0; // En desktop quita el margen
     }
   }
-  // @media (max-width: 768px) {
-  //   margin-left: 75px;
-  // }
 }
 
 .brand-side-bar {
@@ -61,6 +59,7 @@
   position: sticky;
   top: 0;
   left: 0;
+  z-index: 2;
   background-color: $nav-bar-background;
   height: $heigth-nav-bar;
 

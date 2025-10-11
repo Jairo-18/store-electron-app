@@ -8,6 +8,8 @@ import { Injectable } from '@nestjs/common';
 import { IdentificationTypeRepository } from '../repositories/identificationType.repository';
 import { Repository } from 'typeorm';
 import { InvoiceTypeRepository } from '../repositories/invoiceType.repository';
+import { BedTypeRepository } from '../repositories/bedType.repository';
+import { StateTypeRepository } from '../repositories/stateType.repository';
 
 @Injectable()
 export class RepositoryService {
@@ -20,6 +22,8 @@ export class RepositoryService {
     phoneCode: PhoneCodeRepository;
     roleType: RoleTypeRepository;
     taxeType: TaxeTypeRepository;
+    bedType: BedTypeRepository;
+    stateType: StateTypeRepository;
   };
 
   constructor(
@@ -31,6 +35,8 @@ export class RepositoryService {
     private readonly _phoneCodeRepository: PhoneCodeRepository,
     private readonly _roleRepository: RoleTypeRepository,
     private readonly _taxeTypeRepository: TaxeTypeRepository,
+    private readonly _bedTypeRepository: BedTypeRepository,
+    private readonly _stateTypeRepository: StateTypeRepository,
   ) {
     this.repositories = {
       categoryType: _categoryTypeRepository,
@@ -41,6 +47,8 @@ export class RepositoryService {
       phoneCode: _phoneCodeRepository,
       roleType: _roleRepository,
       taxeType: _taxeTypeRepository,
+      bedType: _bedTypeRepository,
+      stateType: _stateTypeRepository,
     };
   }
 

@@ -1,5 +1,5 @@
+import { CategoryTypeClean } from './../../shared/interfaces/types-clean.interface';
 import { BaseResponseDto } from './../../shared/dtos/response.dto';
-import { CategoryTypeClean } from './../../shared/interfaces/typesClean.interface';
 import { HttpStatus } from '@nestjs/common';
 import { ParamsPaginationDto } from './../../shared/dtos/pagination.dto';
 import { ApiProperty } from '@nestjs/swagger';

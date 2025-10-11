@@ -58,7 +58,6 @@ export class InvoiceController {
     @Body() createInvoiceDto: CreateInvoiceDto,
   ): Promise<CreatedRecordResponseDto> {
     const rowId = await await this._invoiceUC.createInvoice(createInvoiceDto);
-
     return {
       title: 'Factura creada',
       message: 'Factura registrada',

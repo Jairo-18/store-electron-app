@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { TaxeType } from './taxeType.entity';
 import { Product } from './product.entity';
+import { Accommodation } from './accommodation.entity';
 
 @Entity({ name: 'InvoiceDetaill' })
 export class InvoiceDetaill {
@@ -29,6 +30,10 @@ export class InvoiceDetaill {
   @ManyToOne(() => Service, { nullable: true })
   @JoinColumn({ name: 'serviceId' })
   service?: Service;
+
+  @ManyToOne(() => Accommodation, { nullable: true })
+  @JoinColumn({ name: 'accommodationId' })
+  accommodation?: Accommodation;
 
   @Column('decimal', { precision: 10, scale: 2 })
   amount?: number;

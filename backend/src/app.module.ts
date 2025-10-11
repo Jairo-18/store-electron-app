@@ -8,6 +8,7 @@ import { join } from 'path';
 import { ProductModule } from './products/product.module';
 import { UserModule } from './users/user.module';
 import { InvoiceModule } from './invoices/invoice.module';
+import { AccommodationModule } from './accommodations/accommodation.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { InvoiceModule } from './invoices/invoice.module';
     ProductModule,
     UserModule,
     InvoiceModule,
+    AccommodationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

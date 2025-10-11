@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { DefaultLayoutComponent } from './layout/pages/default-layout/default-layout.component';
+import { invoicesRoutes } from './invoices/invoices.routes';
 
 export const routes: Routes = [
   {
@@ -29,6 +30,10 @@ export const routes: Routes = [
           import('./service-and-product/service-and-product.routes').then(
             (m) => m.serviceAndProductRoutes
           )
+      },
+      {
+        path: 'invoice',
+        children: invoicesRoutes
       }
     ]
   },
