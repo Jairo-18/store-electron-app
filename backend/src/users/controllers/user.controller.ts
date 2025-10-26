@@ -13,12 +13,12 @@ import {
   UpdateRecordResponseDto,
 } from '../../shared/dtos/response.dto';
 import {
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-
 import { UserUC } from '../useCases/userUC.uc';
 import {
   Body,
@@ -30,6 +30,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ResponsePaginationDto } from 'src/shared/dtos/pagination.dto';
 import {
@@ -39,6 +40,7 @@ import {
   PartialUserDto,
   UserResponseDto,
 } from '../dtos/user.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 @ApiTags('Usuarios')
@@ -49,6 +51,8 @@ export class UserController {
   ) {}
 
   @Get('/paginated-partial')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: ResponsePaginationDto<PartialUserDto> })
   async getPaginatedPartial(
     @Query() params: PaginatedUserSelectParamsDto,
@@ -67,6 +71,8 @@ export class UserController {
   }
 
   @Get()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: GetAllUsersResposeDto })
   async findAll(): Promise<GetAllUsersResposeDto> {
     const users = await this._crudUserUC.findAll();
@@ -77,6 +83,8 @@ export class UserController {
   }
 
   @Post('create')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: CreatedRecordResponseDto })
   @ApiConflictResponse({ type: DuplicatedResponseDto })
   async create(
@@ -92,6 +100,8 @@ export class UserController {
   }
 
   @Get('/paginated-list')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: ResponsePaginationDto<UserResponseDto> })
   async getPaginatedList(
     @Query() params: PaginatedListUsersParamsDto,
@@ -100,6 +110,8 @@ export class UserController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: GetUserResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async findOne(@Param('id') id: string): Promise<GetUserResponseDto> {
@@ -111,6 +123,8 @@ export class UserController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: UpdateRecordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async update(
@@ -126,6 +140,8 @@ export class UserController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: DeleteReCordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async delete(@Param('id') id: string): Promise<DeleteReCordResponseDto> {

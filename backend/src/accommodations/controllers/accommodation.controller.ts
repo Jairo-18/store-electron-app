@@ -1,6 +1,6 @@
+import { CreateRelatedDataServicesAndProductsResponseDto } from './../../products/dtos/product.dto';
 import { ResponsePaginationDto } from './../../shared/dtos/pagination.dto';
 import {
-  CreateRelatedDataServicesAndProductsResponseDto,
   PaginatedAccommodationSelectParamsDto,
   PaginatedListAccommodationsParamsDto,
   PartialAccommodationDto,
@@ -31,14 +31,17 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { AccommodationInterfacePaginatedList } from '../interface/accommodation.interface';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('accommodation')
 @ApiTags('Hospedajes')
@@ -49,6 +52,8 @@ export class AccommodationController {
   ) {}
 
   @Get('/paginated-partial')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: ResponsePaginationDto<PartialAccommodationDto> })
   async getPaginatedPartial(
     @Query() params: PaginatedAccommodationSelectParamsDto,
@@ -57,25 +62,26 @@ export class AccommodationController {
   }
 
   @Post('create')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: CreateAccommodationDto })
   @ApiConflictResponse({ type: DuplicatedResponseDto })
   async create(
     @Body() accommodationDto: CreateAccommodationDto,
   ): Promise<CreatedRecordResponseDto> {
-    const createAccommodation =
-      await this._accommodationUC.create(accommodationDto);
+    const rowId = await this._accommodationUC.create(accommodationDto);
 
     return {
+      title: 'Crear hospedaje',
       message: 'Registro de hospedaje exitoso',
       statusCode: HttpStatus.CREATED,
-      data: {
-        rowId: createAccommodation.id.toString(),
-        ...createAccommodation,
-      },
+      data: rowId,
     };
   }
 
   @Get('/create/related-data')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: CreateRelatedDataServicesAndProductsResponseDto })
   async getRelatedData(): Promise<CreateRelatedDataServicesAndProductsResponseDto> {
     const data = await this._crudAccommodationUC.getRelatedDataToCreate();
@@ -86,6 +92,8 @@ export class AccommodationController {
   }
 
   @Get()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: GetAllAccommodationsResposeDto })
   async findAll(): Promise<GetAllAccommodationsResposeDto> {
     const accommodations = await this._accommodationUC.findAll();
@@ -96,6 +104,8 @@ export class AccommodationController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: UpdateRecordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async update(
@@ -105,12 +115,15 @@ export class AccommodationController {
     await this._accommodationUC.update(accommodationId, accommodationData);
 
     return {
+      title: 'Actualizar hospedaje',
       message: 'Hospedaje actualizado correctamente',
       statusCode: HttpStatus.OK,
     };
   }
 
   @Get('/paginated-list')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: ResponsePaginationDto<Accommodation> })
   async getPaginatedList(
     @Query() params: PaginatedListAccommodationsParamsDto,
@@ -119,6 +132,8 @@ export class AccommodationController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: GetAcommodationDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async findOne(
@@ -132,6 +147,8 @@ export class AccommodationController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: DeleteReCordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async delete(
@@ -139,6 +156,7 @@ export class AccommodationController {
   ): Promise<DeleteReCordResponseDto> {
     await this._accommodationUC.delete(accommodationId);
     return {
+      title: 'Eliminar hospedaje',
       statusCode: HttpStatus.OK,
       message: 'Hospedaje eliminado exitosamente',
     };

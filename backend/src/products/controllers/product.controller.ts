@@ -18,8 +18,10 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -39,6 +41,7 @@ import {
 } from '../dtos/crudProduct.dto';
 import { CrudProductUC } from '../useCases/crudProductUC.uc';
 import { ProductUC } from '../useCases/productUC.uc';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('product')
 @ApiTags('Productos')
@@ -49,6 +52,8 @@ export class ProductController {
   ) {}
 
   @Get('/paginated-partial')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: ResponsePaginationDto<PartialProductDto> })
   async getPaginatedPartial(
     @Query() params: PaginatedProductSelectParamsDto,
@@ -57,6 +62,8 @@ export class ProductController {
   }
 
   @Get('/create/related-data')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: CreateRelatedDataServicesAndProductsResponseDto })
   async getRelatedData(): Promise<CreateRelatedDataServicesAndProductsResponseDto> {
     const data = await this._productUC.getRelatedDataToCreate();
@@ -67,6 +74,8 @@ export class ProductController {
   }
 
   @Post('create')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: CreatedRecordResponseDto })
   @ApiConflictResponse({ type: DuplicatedResponseDto })
   async create(
@@ -82,6 +91,8 @@ export class ProductController {
   }
 
   @Get()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: GetAllProductsResposeDto })
   async findAll(): Promise<GetAllProductsResposeDto> {
     const products = await this._crudProductUC.findAll();
@@ -92,6 +103,8 @@ export class ProductController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: UpdateRecordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async update(
@@ -107,6 +120,8 @@ export class ProductController {
   }
 
   @Get('/paginated-list')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: ResponsePaginationDto<Product> })
   async getPaginatedList(
     @Query() params: PaginatedListProductsParamsDto,
@@ -115,6 +130,8 @@ export class ProductController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: GetProductDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async findOne(@Param('id') id: string): Promise<GetProductDto> {
@@ -126,6 +143,8 @@ export class ProductController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: DeleteReCordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async delete(@Param('id') id: number): Promise<DeleteReCordResponseDto> {

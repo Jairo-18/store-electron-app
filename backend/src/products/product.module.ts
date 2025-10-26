@@ -5,9 +5,13 @@ import { Module } from '@nestjs/common';
 import { SharedModule } from './../shared/shared.module';
 import { ProductService } from './services/crudProduct.service';
 import { CrudProductService } from './services/product.service';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [SharedModule.forRoot()],
+  imports: [
+    SharedModule.forRoot(),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+  ],
   controllers: [ProductController],
   providers: [ProductUC, CrudProductUC, ProductService, CrudProductService],
 })

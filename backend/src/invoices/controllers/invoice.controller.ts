@@ -28,8 +28,10 @@ import {
   Delete,
   Get,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
   ApiNotFoundResponse,
@@ -37,6 +39,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { InvoiceUC } from '../useCases/invoiceUC.uc';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('invoices')
 @ApiTags('Facturas')
@@ -44,6 +47,8 @@ export class InvoiceController {
   constructor(private readonly _invoiceUC: InvoiceUC) {}
 
   @Get('/paginated-list')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: ResponsePaginationDto<Invoice> })
   async getPaginatedList(
     @Query() params: PaginatedListInvoicesParamsDto,
@@ -52,6 +57,8 @@ export class InvoiceController {
   }
 
   @Post()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: CreateInvoiceDto })
   @ApiConflictResponse({ type: DuplicatedResponseDto })
   async create(
@@ -69,6 +76,8 @@ export class InvoiceController {
   }
 
   @Get('/create/related-data')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: CreateRelatedDataInvoiceResponseDto })
   async getRelatedData(): Promise<CreateRelatedDataInvoiceResponseDto> {
     const data = await this._invoiceUC.getRelatedDataToCreate();
@@ -79,6 +88,8 @@ export class InvoiceController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: GetInvoiceWithDetailsResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async findOne(
@@ -92,6 +103,8 @@ export class InvoiceController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: DeleteReCordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async remove(
@@ -106,6 +119,8 @@ export class InvoiceController {
   }
 
   @Post('invoice/:invoiceId/details')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: CreatedRecordResponseDto })
   @ApiBody({ type: CreateInvoiceDetaillDto })
   async createSingleDetail(
@@ -123,6 +138,8 @@ export class InvoiceController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: UpdateRecordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async update(
@@ -138,6 +155,8 @@ export class InvoiceController {
   }
 
   @Delete('details/:detailId')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: DeleteReCordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async deleteDetail(

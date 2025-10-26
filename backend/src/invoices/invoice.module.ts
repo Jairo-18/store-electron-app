@@ -5,9 +5,13 @@ import { InvoiceController } from './controllers/invoice.controller';
 import { Module } from '@nestjs/common';
 import { SharedModule } from '../shared/shared.module';
 import { InvoiceDetailService } from './services/invoiceDetail.service';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [SharedModule.forRoot()],
+  imports: [
+    SharedModule.forRoot(),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+  ],
   controllers: [InvoiceController],
   providers: [
     InvoiceService,

@@ -219,3 +219,41 @@ export class UpdateUserDto {
   @IsUUID('4', { message: 'El ID del rol no es válido' })
   roleType: string;
 }
+
+export class ChangePasswordBaseDto {
+  @ApiProperty({
+    type: String,
+    required: true,
+    example: '********',
+  })
+  @IsString()
+  @IsNotEmpty()
+  newPassword: string;
+  @ApiProperty({
+    type: String,
+    required: true,
+    example: '********',
+  })
+  @IsString()
+  @IsNotEmpty()
+  confirmNewPassword: string;
+}
+
+export class RecoveryPasswordDto extends ChangePasswordBaseDto {
+  @ApiProperty({
+    type: String,
+    required: true,
+    example: 'uuid',
+  })
+  @IsString()
+  @IsNotEmpty()
+  userId: string;
+  @ApiProperty({
+    type: String,
+    required: true,
+    example: 'token',
+  })
+  @IsString()
+  @IsNotEmpty()
+  resetToken: string;
+}

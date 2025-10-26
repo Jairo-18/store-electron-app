@@ -1,10 +1,8 @@
 import { ParamsPaginationDto } from './../../shared/dtos/pagination.dto';
-import { BaseResponseDto } from './../../shared/dtos/response.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { BedType } from './../../shared/entities/bedType.entity';
 import { CategoryType } from './../../shared/entities/categoryType.entity';
 import { StateType } from './../../shared/entities/stateType.entity';
-import { HttpStatus } from '@nestjs/common';
 import { IsOptional, IsString } from 'class-validator';
 
 /**
@@ -14,19 +12,6 @@ export interface CreateRelatedDataServicesAndProductsDto {
   stateType?: StateType[];
   categoryType: CategoryType[];
   bedType: BedType[];
-}
-
-export class CreateRelatedDataServicesAndProductsResponseDto
-  implements BaseResponseDto
-{
-  @ApiProperty({ type: Number, example: HttpStatus.OK })
-  statusCode: number;
-
-  @ApiProperty({
-    type: Object,
-    example: 'Datos relacionados para productos y servicios',
-  })
-  data: CreateRelatedDataServicesAndProductsDto;
 }
 
 /**

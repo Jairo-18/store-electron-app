@@ -105,3 +105,10 @@ SELECT setval(
   (SELECT COALESCE(MAX("id"), 0) + 1 FROM "BedType"),
   false
 );
+
+SELECT setval(
+  pg_get_serial_sequence('"AccessSessions"', 'id'),
+  (SELECT COALESCE(MAX("id"), 0) + 1 FROM "AccessSessions"),
+  false
+);
+

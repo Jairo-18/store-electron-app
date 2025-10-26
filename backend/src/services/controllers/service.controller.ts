@@ -25,8 +25,10 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -38,6 +40,7 @@ import {
   PaginatedServiceSelectParamsDto,
   PartialServiceDto,
 } from '../dtos/service.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('service')
 @ApiTags('Servicios')
@@ -48,6 +51,8 @@ export class ServiceController {
   ) {}
 
   @Get('/paginated-partial')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: ResponsePaginationDto<PartialServiceDto> })
   async getPaginatedPartial(
     @Query() params: PaginatedServiceSelectParamsDto,
@@ -56,6 +61,8 @@ export class ServiceController {
   }
 
   @Post('create')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: CreateServiceDto })
   @ApiConflictResponse({ type: DuplicatedResponseDto })
   async create(
@@ -72,6 +79,8 @@ export class ServiceController {
   }
 
   @Get()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: GetAllServicesResposeDto })
   async findAll(): Promise<GetAllServicesResposeDto> {
     const services = await this._crudServiceUC.findAll();
@@ -82,6 +91,8 @@ export class ServiceController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: UpdateRecordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async update(
@@ -98,6 +109,8 @@ export class ServiceController {
   }
 
   @Get('/paginated-list')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: ResponsePaginationDto<Service> })
   async getPaginatedList(
     @Query() params: PaginatedListServicesParamsDto,
@@ -106,6 +119,8 @@ export class ServiceController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: GetServiceDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async findOne(@Param('id') id: number): Promise<GetServiceDto> {
@@ -117,6 +132,8 @@ export class ServiceController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiOkResponse({ type: DeleteReCordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async delete(@Param('id') id: number): Promise<DeleteReCordResponseDto> {

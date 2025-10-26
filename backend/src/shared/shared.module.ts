@@ -46,6 +46,13 @@ import { AdditionalTypeRepository } from './repositories/additionalType.reposito
 import { BedTypeRepository } from './repositories/bedType.repository';
 import { DiscountTypeRepository } from './repositories/discount.repository';
 import { StateTypeRepository } from './repositories/stateType.repository';
+import { AccessSessions } from './entities/accessSessions.entity';
+import { AccessSessionsRepository } from './repositories/accessSessions.repository';
+import { MailsService } from './services/mails.service';
+import { MailTemplateService } from './services/mail-template.service';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { JwtModule } from '@nestjs/jwt';
+import { PasswordService } from 'src/users/services/password.service';
 
 @Module({})
 export class SharedModule {
@@ -114,7 +121,39 @@ export class SharedModule {
           BedType,
           DiscountType,
           StateType,
+          AccessSessions,
         ]),
+        JwtModule.registerAsync({
+          inject: [ConfigService],
+          useFactory: (configService: ConfigService) => ({
+            secret: configService.get('JWT_SECRET_KEY'),
+            signOptions: {
+              expiresIn: configService.get('JWT_EXPIRES_IN') || '2h',
+            },
+          }),
+        }),
+
+        PassportModule.register({
+          defaultStrategy: 'jwt',
+        }),
+
+        MailerModule.forRootAsync({
+          inject: [ConfigService],
+          useFactory: (configService: ConfigService) => ({
+            transport: {
+              host: configService.get<string>('MAIL_HOST'),
+              port: configService.get<number>('MAIL_PORT'),
+              secure: configService.get<boolean>('MAIL_SECURE') || false,
+              auth: {
+                user: configService.get<string>('MAIL_USER'),
+                pass: configService.get<string>('MAIL_PASSWORD'),
+              },
+            },
+            defaults: {
+              from: configService.get<string>('MAIL_SENDER'),
+            },
+          }),
+        }),
       ],
       controllers: [],
       providers: [
@@ -141,6 +180,10 @@ export class SharedModule {
         BedTypeRepository,
         DiscountTypeRepository,
         StateTypeRepository,
+        AccessSessionsRepository,
+        MailsService,
+        MailTemplateService,
+        PasswordService,
       ],
       exports: [
         TypeOrmModule,
@@ -168,6 +211,10 @@ export class SharedModule {
         BedTypeRepository,
         DiscountTypeRepository,
         StateTypeRepository,
+        AccessSessionsRepository,
+        MailsService,
+        MailTemplateService,
+        PasswordService,
       ],
     };
   }

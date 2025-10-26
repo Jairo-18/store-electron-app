@@ -1,6 +1,10 @@
+import { PasswordService } from './password.service';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { InvoiceRepository } from './../../shared/repositories/invoice.repository';
-import { NOT_FOUND_MESSAGE } from './../../shared/constants/messages.constant';
+import {
+  NOT_FOUND_MESSAGE,
+  PASSWORDS_NOT_MATCH,
+} from './../../shared/constants/messages.constant';
 import { RoleTypeRepository } from './../../shared/repositories/roleType.repository';
 import { UpdateUserModel, UserFiltersModel } from './../models/user.model';
 import { PhoneCodeRepository } from './../../shared/repositories/phoneCode.repository';
@@ -14,9 +18,13 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import * as bcrypt from 'bcryptjs';
+import * as crypto from 'crypto';
 import { Not } from 'typeorm';
-import { CreateUserDto, UpdateUserDto } from '../dtos/crudUser.dto';
+import {
+  CreateUserDto,
+  RecoveryPasswordDto,
+  UpdateUserDto,
+} from '../dtos/crudUser.dto';
 
 @Injectable()
 export class CrudUserService {
@@ -26,6 +34,7 @@ export class CrudUserService {
     private readonly _identificationTypeRepository: IdentificationTypeRepository,
     private readonly _phoneCodeRepository: PhoneCodeRepository,
     private readonly _invoiceRepository: InvoiceRepository,
+    private readonly _passwordService: PasswordService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<{ rowId: string }> {
@@ -273,5 +282,55 @@ export class CrudUserService {
       }
     }
     return user;
+  }
+
+  async findByParams(params: Record<string, any>): Promise<User> {
+    return await this._userRepository.findOne({
+      where: [params],
+      relations: ['roleType'],
+    });
+  }
+
+  async generateResetToken(userId: string): Promise<string> {
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiryDate = new Date();
+    expiryDate.setHours(expiryDate.getHours() + 1);
+
+    await this._userRepository.update(userId, {
+      resetToken: token,
+      resetTokenExpiry: expiryDate,
+    });
+
+    return token;
+  }
+
+  async recoveryPassword(body: RecoveryPasswordDto) {
+    try {
+      const user = await this._userRepository.findOne({
+        where: { id: body.userId, resetToken: body.resetToken },
+      });
+      if (!user) {
+        throw new HttpException(NOT_FOUND_MESSAGE, HttpStatus.NOT_FOUND);
+      }
+      if (user.resetTokenExpiry < new Date()) {
+        throw new HttpException(
+          'Token inválido o expirado',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (body.newPassword !== body.confirmNewPassword) {
+        throw new HttpException(PASSWORDS_NOT_MATCH, HttpStatus.CONFLICT);
+      }
+      await this._userRepository.update(
+        { id: body.userId },
+        {
+          password: await this._passwordService.generateHash(body.newPassword),
+          resetToken: null,
+          resetTokenExpiry: null,
+        },
+      );
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

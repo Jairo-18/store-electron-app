@@ -9,6 +9,7 @@ import { ProductModule } from './products/product.module';
 import { UserModule } from './users/user.module';
 import { InvoiceModule } from './invoices/invoice.module';
 import { AccommodationModule } from './accommodations/accommodation.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AccommodationModule } from './accommodations/accommodation.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
+    AuthModule,
     ProductModule,
     UserModule,
     InvoiceModule,

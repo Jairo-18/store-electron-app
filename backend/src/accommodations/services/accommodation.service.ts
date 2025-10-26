@@ -29,7 +29,7 @@ export class AccommodationService {
 
   async create(
     createAccommodationDto: CreateAccommodationDto,
-  ): Promise<Accommodation> {
+  ): Promise<{ rowId: string }> {
     const codeExist = await this._accommodationRepository.findOne({
       where: { code: createAccommodationDto.code },
     });
@@ -65,7 +65,6 @@ export class AccommodationService {
       if (!stateType) {
         throw new BadRequestException('Tipo de estado no encontrado');
       }
-
       const newAccommodation = this._accommodationRepository.create({
         ...accommodationData,
         categoryType,
@@ -73,7 +72,8 @@ export class AccommodationService {
         stateType,
       });
 
-      return await this._accommodationRepository.save(newAccommodation);
+      const res = await this._accommodationRepository.insert(newAccommodation);
+      return { rowId: res.identifiers[0].id };
     } catch (error) {
       console.error('Error creando hospedaje:', error);
       throw new BadRequestException('No se pudo crear el hospedaje');
