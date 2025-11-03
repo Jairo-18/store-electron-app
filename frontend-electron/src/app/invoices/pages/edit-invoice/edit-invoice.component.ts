@@ -185,7 +185,6 @@ export class EditInvoiceComponent implements OnInit {
     await html2pdf().set(options).from(element).save();
   }
 
-  // Método para manejar cuando se guardan todos los items desde el componente hijo
   onAllItemsSaved(): void {
     if (this.invoiceId) {
       this.getInvoiceToEdit(this.invoiceId, false);

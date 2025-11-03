@@ -6,12 +6,10 @@ import * as fs from 'fs';
 import * as dotenv from 'dotenv';
 import * as http from 'http';
 
-// Variables globales
 let mainWindow: InstanceType<typeof BrowserWindow> | null = null;
 let backendProcess: any = null;
 let backendPort: number = 3001;
 
-// Simular __dirname en ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -40,9 +38,6 @@ function createWindow(): void {
   });
 }
 
-// ----------------------------
-// Health check del backend
-// ----------------------------
 function checkBackendHealth(port: number = backendPort, timeout: number = 1000): Promise<boolean> {
   return new Promise((resolve) => {
     const options = { hostname: 'localhost', port, path: '/health', method: 'GET', timeout };
@@ -56,9 +51,6 @@ function checkBackendHealth(port: number = backendPort, timeout: number = 1000):
   });
 }
 
-// ----------------------------
-// Esperar logs del backend
-// ----------------------------
 function waitForBackendByLogs(): Promise<boolean> {
   return new Promise((resolve) => {
     if (!backendProcess) return resolve(false);
@@ -81,16 +73,12 @@ function waitForBackendByLogs(): Promise<boolean> {
   });
 }
 
-// ----------------------------
-// Copiar archivos de configuración
-// ----------------------------
 function copyConfigFiles(): void {
   if (app.isPackaged) {
     try {
       const resourcePath = process.resourcesPath;
       const backendResourcePath = path.join(resourcePath, 'backend');
 
-      // Copiar archivos .env
       const envFiles = ['.env.production', '.env.development'];
       const sourceBasePath = path.join(__dirname, '../backend');
 
@@ -103,7 +91,6 @@ function copyConfigFiles(): void {
         }
       }
 
-      // Copiar typeorm.config.js si existe
       const typeormSource = path.join(sourceBasePath, 'dist/typeorm.config.js');
       const typeormDest = path.join(backendResourcePath, 'typeorm.config.js');
 
@@ -116,16 +103,12 @@ function copyConfigFiles(): void {
   }
 }
 
-// ----------------------------
-// Ejecutar migraciones
-// ----------------------------
 async function runMigrations(): Promise<boolean> {
   return new Promise((resolve) => {
     try {
       const isPackaged = app.isPackaged;
       const backendDir = isPackaged ? path.join(process.resourcesPath, 'backend') : path.join(__dirname, '../backend');
 
-      // Cargar variables de entorno
       const envFileName = isPackaged ? '.env.production' : '.env.development';
       const envPath = path.join(backendDir, envFileName);
 
@@ -134,16 +117,14 @@ async function runMigrations(): Promise<boolean> {
         envVars = { ...envVars, ...dotenv.parse(fs.readFileSync(envPath)) };
       }
 
-      // En producción, ejecutar directamente el typeorm CLI
       if (isPackaged) {
         const nodeExePath = process.execPath;
         const typeormCliPath = path.join(backendDir, 'node_modules/typeorm/cli.js');
         const configPath = path.join(backendDir, 'typeorm.config.js');
 
-        // Verificar que existan los archivos necesarios
         if (!fs.existsSync(typeormCliPath)) {
           console.error('No se encontró typeorm CLI en:', typeormCliPath);
-          // Intentar con ruta alternativa
+
           const altCliPath = path.join(backendDir, 'node_modules/.bin/typeorm');
           if (fs.existsSync(altCliPath)) {
           }
@@ -159,7 +140,6 @@ async function runMigrations(): Promise<boolean> {
           DB_DATABASE: String(envVars.DB_DATABASE),
         };
 
-        // Usar el ejecutable de backend con comando de migración
         const backendExe = path.join(backendDir, 'backend.exe');
         const migrate = spawn(backendExe, ['--migrations'], {
           cwd: backendDir,
@@ -178,11 +158,10 @@ async function runMigrations(): Promise<boolean> {
 
         migrate.on('error', (err) => {
           console.error('Error ejecutando migraciones:', err);
-          // Intentar método alternativo
+
           runMigrationsAlternative(backendDir, migrationEnv).then(resolve);
         });
       } else {
-        // En desarrollo, usar npm
         const migrate = spawn('npm', ['run', 'migration:run'], {
           cwd: backendDir,
           shell: true,
@@ -206,15 +185,12 @@ async function runMigrations(): Promise<boolean> {
   });
 }
 
-// Método alternativo para ejecutar migraciones
 async function runMigrationsAlternative(backendDir: string, envVars: Record<string, string>): Promise<boolean> {
   return new Promise((resolve) => {
     try {
-      // Intentar ejecutar con node directamente
       const nodeExe = process.execPath;
       const typeormScript = path.join(backendDir, 'dist/run-migrations.js');
 
-      // Crear un script temporal para ejecutar migraciones si no existe
       if (!fs.existsSync(typeormScript)) {
         const migrationScript = `
 const { DataSource } = require('typeorm');
@@ -268,9 +244,6 @@ dataSource.initialize()
   });
 }
 
-// ----------------------------
-// Iniciar backend
-// ----------------------------
 function startBackend(): Promise<boolean> {
   return new Promise((resolve) => {
     try {
@@ -332,19 +305,14 @@ function startBackend(): Promise<boolean> {
   });
 }
 
-// ----------------------------
-// Inicializar app
-// ----------------------------
 async function initializeApp(): Promise<void> {
-  // Copiar archivos de configuración si es necesario
   copyConfigFiles();
 
-  // Ejecutar migraciones
   const migrationsOk = await runMigrations();
 
   if (!migrationsOk) {
     console.error('Advertencia: Las migraciones no se ejecutaron correctamente');
-    // Mostrar diálogo de error pero continuar
+
     if (app.isPackaged) {
       dialog.showMessageBoxSync({
         type: 'warning',
@@ -355,10 +323,8 @@ async function initializeApp(): Promise<void> {
     }
   }
 
-  // Esperar un poco después de las migraciones
   await new Promise((resolve) => setTimeout(resolve, 2000));
 
-  // Iniciar backend
   const backendReady = await startBackend();
 
   if (!backendReady) {
@@ -368,17 +334,12 @@ async function initializeApp(): Promise<void> {
     return;
   }
 
-  // Esperar y verificar salud del backend
   await new Promise((resolve) => setTimeout(resolve, 3000));
   const healthOk = await checkBackendHealth();
 
-  // Crear ventana principal
   createWindow();
 }
 
-// ----------------------------
-// Eventos de la app
-// ----------------------------
 app.whenReady().then(initializeApp);
 
 app.on('window-all-closed', () => {

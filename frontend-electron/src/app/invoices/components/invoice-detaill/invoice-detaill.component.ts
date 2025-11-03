@@ -86,7 +86,6 @@ export class InvoiceDetaillComponent implements OnChanges, AfterViewInit {
       if (this.paginatorInitialized) {
         this.dataSource.paginator = this.paginator;
 
-        // Saltar a la última página automáticamente
         setTimeout(() => {
           const totalItems = this.dataSource.data.length;
           const pageSize = this.paginator.pageSize;
@@ -121,10 +120,8 @@ export class InvoiceDetaillComponent implements OnChanges, AfterViewInit {
   addItem(detail: InvoiceDetaill): void {
     if (!detail) return;
 
-    // Agrega el item directamente al dataSource
     this.dataSource.data = [...this.dataSource.data, detail];
 
-    // Opcional: mover a la última página si hay paginación
     if (this.paginator) {
       const totalItems = this.dataSource.data.length;
       const pageSize = this.paginator.pageSize;

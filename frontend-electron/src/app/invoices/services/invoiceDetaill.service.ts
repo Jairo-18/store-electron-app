@@ -1,4 +1,3 @@
-// Importaciones necesarias desde Angular y otras partes de la app
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
@@ -6,7 +5,6 @@ import { Observable } from 'rxjs';
 import { ApiResponseCreateInterface } from '../../shared/interfaces/api-response.interface';
 import { CreateInvoiceDetaill } from '../interface/invoiceDetaill.interface';
 
-// Servicio injectable en el root del proyecto (singleton)
 @Injectable({ providedIn: 'root' })
 export class InvoiceDetaillService {
   private readonly _httpClient: HttpClient = inject(HttpClient);
@@ -41,7 +39,7 @@ export class InvoiceDetaillService {
   ): Observable<ApiResponseCreateInterface> {
     return this._httpClient.post<ApiResponseCreateInterface>(
       `${environment.apiUrl}invoices/invoice/${invoiceId}/details/bulk`,
-      { details: invoiceDetails } // 👈 importante: envolver en un objeto
+      { details: invoiceDetails }
     );
   }
 
@@ -53,7 +51,7 @@ export class InvoiceDetaillService {
    */
   deleteItemInvoice(invoiceDetailId: number): Observable<unknown> {
     return this._httpClient.delete(
-      `${environment.apiUrl}invoices/details/${invoiceDetailId}` // URL de DELETE
+      `${environment.apiUrl}invoices/details/${invoiceDetailId}`
     );
   }
 }

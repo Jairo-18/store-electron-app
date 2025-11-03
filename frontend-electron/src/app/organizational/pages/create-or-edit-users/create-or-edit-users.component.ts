@@ -101,7 +101,6 @@ export class CreateOrEditUsersComponent implements OnInit {
         const roleName = this.userLogged?.roleType?.name;
 
         if (roleName === 'Recepcionista' || roleName === 'RECEPCIONISTA') {
-          // Si es Recepcionista, solo puede ver el rol Cliente
           this.roleType = allRoles.filter(
             (r) => r.name === 'Cliente' || r.name === 'CLIENTE'
           );
@@ -110,7 +109,6 @@ export class CreateOrEditUsersComponent implements OnInit {
           roleName === 'RECEPCIONISTA' ||
           roleName === 'recepcionista'
         ) {
-          // Si es Empleado, solo puede ver el rol Cliente
           this.roleType = allRoles.filter(
             (r) => r.name === 'Cliente' || r.name === 'CLIENTE'
           );

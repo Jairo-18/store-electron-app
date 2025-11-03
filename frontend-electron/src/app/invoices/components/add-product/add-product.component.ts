@@ -154,7 +154,6 @@ export class AddProductComponent implements OnInit {
       categoryId: product.categoryTypeId
     });
 
-    // ✅ limpiar errores del campo name
     this.form.get('name')?.setErrors(null);
     this.form.get('name')?.markAsTouched();
 
@@ -189,12 +188,11 @@ export class AddProductComponent implements OnInit {
         : tax.percentage;
 
     if (!isFinite(rate) || rate < 0) return 0;
-    // Si viene como 12 en lugar de 0.12, normalizar
+
     if (rate > 1) rate = rate / 100;
     return rate;
   }
 
-  /** Calcula finalPrice = (precio_sin_IVA * (1+IVA)) * cantidad */
   private updateFinalPrice() {
     const base = Number(
       this.form.get('priceWithoutTax')?.value ??

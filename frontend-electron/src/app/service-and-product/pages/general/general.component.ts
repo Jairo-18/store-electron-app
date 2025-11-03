@@ -29,8 +29,6 @@ import { ServiceComplete } from '../../interface/service.interface';
     MatTabsModule,
     SeeProductsComponent,
     CreateOrEditProductComponent,
-    // CreateOrEditServiceComponent,
-    // SeeServicesComponent,
     BasePageComponent
   ],
   templateUrl: './general.component.html',
@@ -115,7 +113,6 @@ export class GeneralComponent implements AfterViewInit, OnInit {
       }
     };
 
-    // Category Type
     const categoryOptions = this.categoryTypes.map((type) => ({
       value: type.id,
       label: type.name || ''

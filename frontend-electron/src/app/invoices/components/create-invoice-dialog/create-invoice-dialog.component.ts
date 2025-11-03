@@ -278,19 +278,18 @@ export class CreateInvoiceDialogComponent implements OnInit {
       });
   }
 
-  // ✅ AGREGAR ESTE GETTER PARA EL CONTADOR DE CARACTERES
   get observationsLength(): number {
     return this.form.get('observations')?.value?.length || 0;
   }
 
   private createInvoice(): void {
     const today = new Date();
-    const formattedDate = today.toLocaleDateString('en-CA'); // yyyy-MM-dd
+    const formattedDate = today.toLocaleDateString('en-CA');
 
     const payload = {
       ...this.form.value,
       userId: this.form.get('userId')?.value,
-      startDate: formattedDate, // <-- string plano
+      startDate: formattedDate,
       endDate: formattedDate
     };
 

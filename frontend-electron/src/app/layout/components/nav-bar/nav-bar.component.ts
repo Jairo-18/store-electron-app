@@ -28,12 +28,10 @@ export class NavBarComponent {
     const currentState =
       this.dropdowns[dropdown as keyof typeof this.dropdowns];
 
-    // Cierra todos los dropdowns primero
     Object.keys(this.dropdowns).forEach((key) => {
       this.dropdowns[key as keyof typeof this.dropdowns] = false;
     });
 
-    // Si estaba cerrado, lo abre. Si estaba abierto, se queda cerrado
     this.dropdowns[dropdown as keyof typeof this.dropdowns] = !currentState;
   }
 

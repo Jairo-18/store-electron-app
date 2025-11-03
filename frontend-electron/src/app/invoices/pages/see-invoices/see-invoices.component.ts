@@ -256,19 +256,16 @@ export class SeeInvoicesComponent implements OnInit {
       const val = values[key];
       if (val === null || val === '' || val === undefined) return;
 
-      // Convertir IDs a número
       if (key.endsWith('Id')) {
         formattedParams[key] = Number(val);
         return;
       }
 
-      // Convertir fechas a YYYY-MM-DD
       if (this.searchFields.find((f) => f.name === key)?.type === 'date') {
         formattedParams[key] = this.formatDateISO(val);
         return;
       }
 
-      // Otros valores
       formattedParams[key] = val;
     });
     return formattedParams;
