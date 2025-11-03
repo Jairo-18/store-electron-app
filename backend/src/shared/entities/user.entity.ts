@@ -12,6 +12,7 @@ import {
 import { IdentificationType } from './identificationType.entity';
 import { RoleType } from './roleType.entity';
 import { Invoice } from './invoice.entity';
+import { Hotel } from './hotel.entity';
 
 @Entity({ name: 'User' })
 export class User {
@@ -62,6 +63,10 @@ export class User {
   )
   @JoinColumn({ name: 'identificationTypeId' })
   identificationType: IdentificationType;
+
+  @ManyToOne(() => Hotel, (hotel) => hotel.users, { nullable: true })
+  @JoinColumn({ name: 'hotelId' })
+  hotel?: Hotel;
 
   @OneToMany(() => Invoice, (invoice) => invoice.user)
   invoices: Invoice[];

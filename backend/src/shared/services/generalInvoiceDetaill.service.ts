@@ -16,7 +16,6 @@ export class GeneralInvoiceDetaillService {
   ) {}
   async updateInvoiceTotal(invoiceId: number): Promise<void> {
     try {
-      // ✅ Calcular totales directamente en la DB
       const { subtotalWithoutTax, subtotalWithTax, total } =
         await this._invoiceDetaillRepository
           .createQueryBuilder('d')
@@ -32,7 +31,6 @@ export class GeneralInvoiceDetaillService {
           .where('d.invoiceId = :invoiceId', { invoiceId })
           .getRawOne();
 
-      // ✅ Actualizar factura
       const updateResult = await this._invoiceRepository.update(invoiceId, {
         subtotalWithoutTax: Math.round(Number(subtotalWithoutTax) * 100) / 100,
         subtotalWithTax: Math.round(Number(subtotalWithTax) * 100) / 100,
@@ -62,7 +60,6 @@ export class GeneralInvoiceDetaillService {
     product: Product,
     dto: any,
   ): { priceBuy: number; priceWithoutTax: number } {
-    // Si se proporcionan precios específicos en el DTO, usarlos (precios históricos)
     if (dto.priceBuy !== undefined && dto.priceWithoutTax !== undefined) {
       return {
         priceBuy: Number(dto.priceBuy),
@@ -70,7 +67,6 @@ export class GeneralInvoiceDetaillService {
       };
     }
 
-    // Si no, usar los precios actuales del producto
     return {
       priceBuy: Number(product.priceBuy),
       priceWithoutTax: Number(product.priceSale),

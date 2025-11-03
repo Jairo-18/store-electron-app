@@ -15,6 +15,7 @@ import {
 import { PaidType } from './paidType.entity';
 import { InvoiceDetaill } from './invoiceDetaill.entity';
 import { InvoiceType } from './invoiceType.entity';
+import { Hotel } from './hotel.entity';
 
 @Unique('UQ_invoice_code_per_type', ['code', 'invoiceType'])
 @Entity({ name: 'Invoice' })
@@ -43,6 +44,10 @@ export class Invoice {
   @ManyToOne(() => PayType)
   @JoinColumn({ name: 'payTypeId' })
   payType?: PayType;
+
+  @ManyToOne(() => Hotel, (hotel) => hotel.invoices, { nullable: true })
+  @JoinColumn({ name: 'hotelId' })
+  hotel?: Hotel;
 
   @Column({ type: 'boolean', default: false })
   invoiceElectronic: boolean;

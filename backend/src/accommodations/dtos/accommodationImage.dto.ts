@@ -23,7 +23,6 @@ export class AccommodationImageResponseDto {
   publicId: string;
 }
 
-// DTOs de respuesta de alojamiento
 export class UploadAccommodationImageResponseDto {
   @ApiProperty({ example: 201 })
   statusCode: number;
@@ -65,7 +64,6 @@ export class GetAccommodationImagesResponseDto {
   data: AccommodationImageResponseDto[];
 }
 
-// DTO para parámetros de alojamiento
 export class AccommodationImageParamsDto {
   @ApiProperty({ example: 1, description: 'ID del alojamiento' })
   @Transform(({ value }) => parseInt(value))

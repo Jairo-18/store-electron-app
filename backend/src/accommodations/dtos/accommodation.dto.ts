@@ -69,7 +69,7 @@ export class CreateAccommodationDto {
     required: false,
   })
   @IsNumber()
-  @Min(0) // ahora acepta 0 o números positivos
+  @Min(0)
   @IsOptional()
   priceBuy?: number;
 
@@ -79,7 +79,7 @@ export class CreateAccommodationDto {
     required: false,
   })
   @IsNumber()
-  @Min(0) // acepta 0 o números positivos
+  @Min(0)
   @IsOptional()
   priceSale?: number;
 
@@ -155,7 +155,7 @@ export class UpdateAccommodationDto {
     required: false,
   })
   @IsNumber()
-  @Min(0) // ahora acepta 0 o números positivos
+  @Min(0)
   @IsOptional()
   priceBuy?: number;
 
@@ -165,7 +165,7 @@ export class UpdateAccommodationDto {
     required: false,
   })
   @IsNumber()
-  @Min(0) // acepta 0 o números positivos
+  @Min(0)
   @IsOptional()
   priceSale?: number;
 

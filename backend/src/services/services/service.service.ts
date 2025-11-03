@@ -46,7 +46,6 @@ export class ServiceService {
       };
     }
 
-    // Búsqueda global
     if (params.search) {
       const search = params.search.trim();
       const searchConditions: FindOptionsWhere<Service>[] = [

@@ -125,7 +125,7 @@ export class UpdateProductDto {
 
   @ApiProperty({ example: 10, description: 'Cantidad disponible' })
   @IsOptional()
-  @Min(0) // ahora acepta 0 o números positivos
+  @Min(0)
   @IsNumber()
   amount?: number;
 

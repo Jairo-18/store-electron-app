@@ -1,12 +1,9 @@
-// 👇 FIX para que pkg no rompa con NestJS/TypeORM en Node 22+
 import * as nodeCrypto from 'node:crypto';
 
-// Solo define o complementa si hace falta
 if (!globalThis.crypto) {
   // @ts-ignore
   globalThis.crypto = nodeCrypto;
 } else {
-  // Agregamos métodos faltantes que esperan algunos paquetes
   if (!(globalThis.crypto as any).randomUUID) {
     (globalThis.crypto as any).randomUUID = nodeCrypto.randomUUID;
   }
@@ -35,10 +32,7 @@ import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
 import { AppDataSource } from 'typeorm.config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-// 👇 Importa tu DataSource central
-
 async function bootstrap() {
-  // 👉 Si se arranca con --migrations, corre migraciones y termina
   if (process.argv.includes('--migrations')) {
     try {
       await AppDataSource.initialize();

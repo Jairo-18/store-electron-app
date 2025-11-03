@@ -8,6 +8,7 @@ import {
   DeleteDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
+import { Hotel } from './hotel.entity';
 
 @Entity()
 export class PhoneCode {
@@ -22,6 +23,9 @@ export class PhoneCode {
 
   @OneToMany(() => User, (user) => user.phoneCode)
   user: User[];
+
+  @OneToMany(() => Hotel, (hotel) => hotel.phoneCode)
+  hotels: Hotel[];
 
   @CreateDateColumn({
     type: 'timestamp',

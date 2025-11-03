@@ -11,6 +11,7 @@ import {
 import { CategoryType } from './categoryType.entity';
 import { BedType } from './bedType.entity';
 import { StateType } from './stateType.entity';
+import { Hotel } from './hotel.entity';
 
 @Entity({ name: 'Accommodation' })
 export class Accommodation {
@@ -64,6 +65,10 @@ export class Accommodation {
   @ManyToOne(() => CategoryType, (categoryType) => categoryType.accommodation)
   @JoinColumn({ name: 'categoryTypeId' })
   categoryType: CategoryType;
+
+  @ManyToOne(() => Hotel, (hotel) => hotel.accommodations, { nullable: true })
+  @JoinColumn({ name: 'hotelId' })
+  hotel?: Hotel;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt?: Date;

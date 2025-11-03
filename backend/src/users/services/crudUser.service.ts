@@ -6,11 +6,12 @@ import {
   PASSWORDS_NOT_MATCH,
 } from './../../shared/constants/messages.constant';
 import { RoleTypeRepository } from './../../shared/repositories/roleType.repository';
-import { UpdateUserModel, UserFiltersModel } from './../models/user.model';
+import { UserFiltersModel } from './../models/user.model';
 import { PhoneCodeRepository } from './../../shared/repositories/phoneCode.repository';
 import { IdentificationTypeRepository } from '../../shared/repositories/identificationType.repository';
 import { UserRepository } from '../../shared/repositories/user.repository';
 import { User } from '../../shared/entities/user.entity';
+import { Hotel } from '../../shared/entities/hotel.entity';
 import {
   BadRequestException,
   HttpException,
@@ -25,6 +26,7 @@ import {
   RecoveryPasswordDto,
   UpdateUserDto,
 } from '../dtos/crudUser.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class CrudUserService {
@@ -37,15 +39,33 @@ export class CrudUserService {
     private readonly _passwordService: PasswordService,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<{ rowId: string }> {
+  async create(
+    createUserDto: CreateUserDto,
+    creatorHotelId?: number,
+  ): Promise<{ rowId: string }> {
     createUserDto.email = createUserDto.email?.trim().toLowerCase() || null;
+
+    if (!creatorHotelId) {
+      throw new HttpException(
+        'Tu usuario no tiene un hotel asignado. Contacta al administrador.',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const finalHotelId = creatorHotelId;
 
     if (createUserDto.email) {
       const existingUserByEmail = await this._userRepository.findOne({
-        where: { email: createUserDto.email },
+        where: {
+          email: createUserDto.email,
+          hotel: { id: finalHotelId },
+        },
       });
       if (existingUserByEmail) {
-        throw new HttpException('El email ya está en uso', HttpStatus.CONFLICT);
+        throw new HttpException(
+          'El email ya está en uso en este hotel',
+          HttpStatus.CONFLICT,
+        );
       }
     }
 
@@ -53,11 +73,12 @@ export class CrudUserService {
       where: {
         identificationType: { id: Number(createUserDto.identificationType) },
         identificationNumber: createUserDto.identificationNumber,
+        hotel: { id: finalHotelId },
       },
     });
     if (existingUserByIdentification) {
       throw new HttpException(
-        'El usuario ya existe con esta identificación',
+        'Ya existe un usuario con esta identificación en este hotel',
         HttpStatus.CONFLICT,
       );
     }
@@ -66,11 +87,12 @@ export class CrudUserService {
       where: {
         phoneCode: { id: Number(createUserDto.phoneCode) },
         phone: createUserDto.phone,
+        hotel: { id: finalHotelId },
       },
     });
     if (existingPhoneUser) {
       throw new HttpException(
-        'Este número ya está en uso',
+        'Este número ya está en uso en este hotel',
         HttpStatus.CONFLICT,
       );
     }
@@ -101,26 +123,66 @@ export class CrudUserService {
       );
     }
 
+    const hotel = finalHotelId
+      ? await this._userRepository.manager.findOne(Hotel, {
+          where: { id: finalHotelId },
+        })
+      : null;
+
+    if (finalHotelId && !hotel) {
+      throw new HttpException('El hotel no existe', HttpStatus.NOT_FOUND);
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+
+    const { confirmNewPassword, ...createUserData } = createUserDto;
+
     const userConfirm: Partial<User> = {
-      ...createUserDto,
+      ...createUserData,
+      password: hashedPassword,
       roleType,
       identificationType,
       phoneCode,
+      hotel: hotel || undefined,
     };
 
     const res = await this._userRepository.insert(userConfirm);
     return { rowId: res.identifiers[0].id };
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    updaterHotelId?: number,
+  ) {
     const userExist = await this.findOne(id);
     if (!userExist) {
       throw new HttpException('El usuario no existe', HttpStatus.NOT_FOUND);
     }
 
+    if (!updaterHotelId) {
+      throw new HttpException(
+        'Tu usuario no tiene un hotel asignado. Contacta al administrador.',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const userHotelId = userExist.hotel?.id;
+    if (userHotelId !== updaterHotelId) {
+      throw new HttpException(
+        'No tienes permisos para actualizar este usuario',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
     if (updateUserDto.email) {
       const emailExist = await this._userRepository.findOne({
-        where: { id: Not(id), email: updateUserDto.email },
+        where: {
+          id: Not(id),
+          email: updateUserDto.email,
+          hotel: { id: updaterHotelId },
+        },
       });
       if (emailExist) {
         throw new HttpException(
@@ -193,64 +255,66 @@ export class CrudUserService {
     return await this._userRepository.update({ id }, updatedUser);
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(hotelId?: number): Promise<User[]> {
+    if (!hotelId) {
+      throw new HttpException(
+        'Tu usuario no tiene un hotel asignado. Contacta al administrador.',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
     const users = await this._userRepository.find({
-      relations: ['roleType', 'identificationType', 'phoneCode'],
+      where: { hotel: { id: hotelId } },
+      relations: ['roleType', 'identificationType', 'phoneCode', 'hotel'],
     });
 
     return users.map((user) => {
       const { createdAt, updatedAt, ...userWithoutDates } = user;
-      if (userWithoutDates.roleType) {
-        const { createdAt, updatedAt, deletedAt, ...roleType } =
-          userWithoutDates.roleType;
-        userWithoutDates.roleType = roleType;
-      }
-      if (userWithoutDates.identificationType) {
-        const { createdAt, updatedAt, deletedAt, ...identificationType } =
-          userWithoutDates.identificationType;
-        userWithoutDates.identificationType = identificationType;
-      }
-      if (userWithoutDates.phoneCode) {
-        const { createdAt, updatedAt, deletedAt, ...phoneCode } =
-          userWithoutDates.phoneCode;
-        userWithoutDates.phoneCode = phoneCode;
-      }
       return userWithoutDates;
     });
   }
 
-  async findOne(id: string) {
-    const { ...user } = await this._userRepository.findOne({
-      where: { id },
-      relations: ['roleType', 'identificationType', 'phoneCode'],
+  async findOne(id: string, hotelId?: number) {
+    if (!hotelId) {
+      throw new HttpException(
+        'Tu usuario no tiene un hotel asignado. Contacta al administrador.',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const user = await this._userRepository.findOne({
+      where: { id, hotel: { id: hotelId } },
+      relations: ['roleType', 'identificationType', 'phoneCode', 'hotel'],
     });
 
     if (!user) {
-      throw new HttpException('El usuario no existe', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'El usuario no existe o no pertenece a tu hotel',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const { createdAt, updatedAt, ...userWithoutDates } = user;
-    if (userWithoutDates.roleType) {
-      const { createdAt, updatedAt, deletedAt, ...roleType } =
-        userWithoutDates.roleType;
-      userWithoutDates.roleType = roleType;
-    }
-    if (userWithoutDates.identificationType) {
-      const { createdAt, updatedAt, deletedAt, ...identificationType } =
-        userWithoutDates.identificationType;
-      userWithoutDates.identificationType = identificationType;
-    }
-    if (userWithoutDates.phoneCode) {
-      const { createdAt, updatedAt, deletedAt, ...phoneCode } =
-        userWithoutDates.phoneCode;
-      userWithoutDates.phoneCode = phoneCode;
-    }
-
     return userWithoutDates;
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string, deleterHotelId?: number): Promise<void> {
     const user = await this.findOne(id);
+
+    if (!deleterHotelId) {
+      throw new HttpException(
+        'Tu usuario no tiene un hotel asignado. Contacta al administrador.',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const userHotelId = user.hotel?.id;
+    if (userHotelId !== deleterHotelId) {
+      throw new HttpException(
+        'No tienes permisos para eliminar este usuario',
+        HttpStatus.FORBIDDEN,
+      );
+    }
 
     const existsInInvoices = await this._invoiceRepository.exist({
       where: [{ user: { id } }],
@@ -287,7 +351,7 @@ export class CrudUserService {
   async findByParams(params: Record<string, any>): Promise<User> {
     return await this._userRepository.findOne({
       where: [params],
-      relations: ['roleType'],
+      relations: ['roleType', 'hotel'],
     });
   }
 
@@ -332,5 +396,155 @@ export class CrudUserService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  async createForAdmin(
+    createUserDto: CreateUserDto,
+    targetHotelId: number,
+  ): Promise<{ rowId: string }> {
+    createUserDto.email = createUserDto.email?.trim().toLowerCase() || null;
+
+    if (!targetHotelId) {
+      throw new HttpException(
+        'El hotelId es obligatorio',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (createUserDto.email) {
+      const existingUserByEmail = await this._userRepository.findOne({
+        where: {
+          email: createUserDto.email,
+          hotel: { id: targetHotelId },
+        },
+      });
+      if (existingUserByEmail) {
+        throw new HttpException(
+          'El email ya está en uso en este hotel',
+          HttpStatus.CONFLICT,
+        );
+      }
+    }
+
+    const existingUserByIdentification = await this._userRepository.findOne({
+      where: {
+        identificationType: { id: Number(createUserDto.identificationType) },
+        identificationNumber: createUserDto.identificationNumber,
+        hotel: { id: targetHotelId },
+      },
+    });
+    if (existingUserByIdentification) {
+      throw new HttpException(
+        'Ya existe un usuario con esta identificación en este hotel',
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    const existingPhoneUser = await this._userRepository.findOne({
+      where: {
+        phoneCode: { id: Number(createUserDto.phoneCode) },
+        phone: createUserDto.phone,
+        hotel: { id: targetHotelId },
+      },
+    });
+    if (existingPhoneUser) {
+      throw new HttpException(
+        'Este número ya está en uso en este hotel',
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    const roleType =
+      createUserDto.roleType && createUserDto.roleType.trim() !== ''
+        ? await this._roleTypeRepository.findOne({
+            where: { id: String(createUserDto.roleType) },
+          })
+        : await this._roleTypeRepository.findOne({
+            where: { id: '4a96be8d-308f-434f-9846-54e5db3e7d95' },
+          });
+
+    const identificationType = await this._identificationTypeRepository.findOne(
+      {
+        where: { id: Number(createUserDto.identificationType) },
+      },
+    );
+
+    const phoneCode = await this._phoneCodeRepository.findOne({
+      where: { id: Number(createUserDto.phoneCode) },
+    });
+
+    if (!roleType || !identificationType || !phoneCode) {
+      throw new HttpException(
+        'Rol, tipo de identificación o código de teléfono inválido',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const hotel = await this._userRepository.manager.findOne(Hotel, {
+      where: { id: targetHotelId },
+    });
+
+    if (!hotel) {
+      throw new HttpException('El hotel no existe', HttpStatus.NOT_FOUND);
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+
+    const { confirmNewPassword, ...createUserData } = createUserDto;
+
+    const userConfirm: Partial<User> = {
+      ...createUserData,
+      password: hashedPassword,
+      roleType,
+      identificationType,
+      phoneCode,
+      hotel,
+    };
+
+    const res = await this._userRepository.insert(userConfirm);
+    return { rowId: res.identifiers[0].id };
+  }
+
+  async findAllForAdmin(): Promise<User[]> {
+    const users = await this._userRepository.find({
+      relations: ['roleType', 'identificationType', 'phoneCode', 'hotel'],
+    });
+
+    return users.map((user) => {
+      const { createdAt, updatedAt, ...userWithoutDates } = user;
+      return userWithoutDates;
+    });
+  }
+
+  async findOneForAdmin(id: string) {
+    const user = await this._userRepository.findOne({
+      where: { id },
+      relations: ['roleType', 'identificationType', 'phoneCode', 'hotel'],
+    });
+
+    if (!user) {
+      throw new HttpException('El usuario no existe', HttpStatus.NOT_FOUND);
+    }
+
+    const { createdAt, updatedAt, ...userWithoutDates } = user;
+    return userWithoutDates;
+  }
+
+  async deleteForAdmin(id: string): Promise<void> {
+    const user = await this.findOneForAdmin(id);
+
+    const existsInInvoices = await this._invoiceRepository.exist({
+      where: [{ user: { id } }],
+    });
+
+    if (existsInInvoices) {
+      const fullName = `${user.firstName} ${user.lastName}`;
+      throw new BadRequestException(
+        `El usuario ${fullName} está asociado a una factura y no puede eliminarse.`,
+      );
+    }
+
+    await this._userRepository.delete(id);
   }
 }

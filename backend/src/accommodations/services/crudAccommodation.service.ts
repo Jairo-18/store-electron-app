@@ -99,7 +99,7 @@ export class CrudAccommodationService {
         id: params.stateType,
       };
     }
-    // Búsqueda global
+
     if (params.search) {
       const search = params.search.trim();
       const searchConditions: FindOptionsWhere<Accommodation>[] = [
@@ -198,7 +198,7 @@ export class CrudAccommodationService {
         skip,
         take: params.perPage,
         order: { name: params.order ?? 'ASC' },
-        select: ['name'], // solo nombre
+        select: ['name'],
       });
 
     const items: PartialAccommodationDto[] = entities.map((e) => ({

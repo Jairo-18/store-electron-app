@@ -15,6 +15,7 @@ import {
 } from 'class-validator';
 import { HttpStatus } from '@nestjs/common';
 import { GET_ALL_USER_EXAMPLE } from '../constants/examples.conts';
+import { Match } from 'src/shared/validators/match.decorator';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -105,6 +106,34 @@ export class CreateUserDto {
   @IsUUID()
   @IsOptional()
   roleType?: string;
+
+  @ApiProperty({
+    required: true,
+    example: '********',
+  })
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+
+  @ApiProperty({
+    required: true,
+    example: '********',
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Match('password', { message: 'Las contraseñas no coinciden' })
+  confirmNewPassword: string;
+}
+
+export class CreateUserDtoWithHotel extends CreateUserDto {
+  @ApiProperty({
+    example: 1,
+    required: true,
+    description: 'ID del hotel (solo para super-admin)',
+  })
+  @IsNumber()
+  @IsNotEmpty({ message: 'El hotel es requerido' })
+  hotelId: number;
 }
 
 export interface GetAllUsersRespose {

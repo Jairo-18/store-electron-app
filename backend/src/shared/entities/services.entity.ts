@@ -9,6 +9,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { CategoryType } from './categoryType.entity';
+import { Hotel } from './hotel.entity';
 
 @Entity({ name: 'Service' })
 export class Service {
@@ -33,6 +34,10 @@ export class Service {
   @ManyToOne(() => CategoryType, (categoryType) => categoryType.service)
   @JoinColumn({ name: 'categoryTypeId' })
   categoryType: CategoryType;
+
+  @ManyToOne(() => Hotel, (hotel) => hotel.services, { nullable: true })
+  @JoinColumn({ name: 'hotelId' })
+  hotel?: Hotel;
 
   @CreateDateColumn({
     type: 'timestamp',

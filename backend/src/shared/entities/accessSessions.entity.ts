@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
+import { Hotel } from './hotel.entity';
 
 @Entity({ name: 'AccessSessions' })
 export class AccessSessions {
@@ -21,6 +22,10 @@ export class AccessSessions {
   })
   @JoinColumn({ name: 'userId' })
   user: User;
+
+  @ManyToOne(() => Hotel, (hotel) => hotel.accessSessions, { nullable: true })
+  @JoinColumn({ name: 'hotelId' })
+  hotel?: Hotel;
 
   @Column('varchar', { length: 2000 })
   accessToken: string;

@@ -98,7 +98,6 @@ export class AccommodationService {
       throw new NotFoundException(`Hospedaje con ID ${id} no encontrado`);
     }
 
-    // Validar si el código nuevo ya está en uso por otro hospedaje
     if (updateAccommodationDto.code) {
       const codeExist = await this._accommodationRepository.findOne({
         where: { code: updateAccommodationDto.code },
@@ -110,7 +109,6 @@ export class AccommodationService {
       }
     }
 
-    // Validar y actualizar categoría si se envía
     if (updateAccommodationDto.categoryTypeId) {
       const category = await this._categoryTypeRepository.findOne({
         where: { id: updateAccommodationDto.categoryTypeId },

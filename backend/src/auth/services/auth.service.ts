@@ -47,13 +47,20 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    const payload = { email: user.email, sub: user.id, id: user.id };
-
-    const tokens = this.generateTokens(payload);
-
     if (!user.roleType) {
       throw new UnauthorizedException('El usuario no tiene un rol asignado');
     }
+
+    const hotelId = user.hotel?.id || null;
+
+    const payload = {
+      email: user.email,
+      sub: user.id,
+      id: user.id,
+      hotelId,
+    };
+
+    const tokens = this.generateTokens(payload);
 
     const accessSessionId = await this._accessSessionsService.generateSession({
       userId: user.id,
@@ -69,6 +76,7 @@ export class AuthService {
           roleTypeId: user.roleType.id,
           name: user.roleType.name,
         },
+        hotelId,
       },
       session: {
         accessSessionId,
@@ -76,8 +84,15 @@ export class AuthService {
     };
   }
 
-  async validateSession({ userId, token }: { userId: string; token: string }) {
-    const user = await this._crudUserService.findOne(userId);
+  async validateSession({
+    userId,
+    token,
+    hotelId,
+  }: {
+    userId: string;
+    token: string;
+    hotelId?: number;
+  }) {
     let payload;
 
     try {
@@ -90,11 +105,16 @@ export class AuthService {
       throw new UnauthorizedException('No autorizado');
     }
 
+    const user = await this._crudUserService.findByParams({ id: userId });
+
     if (!user) {
       throw new UnauthorizedException('No autorizado');
     }
 
-    return user;
+    return {
+      ...user,
+      hotelId: hotelId ?? user.hotel?.id ?? null,
+    };
   }
 
   generateTokens(payload: TokenPayloadModel): {
@@ -135,10 +155,13 @@ export class AuthService {
       throw new UnauthorizedException('No autorizado');
     }
 
+    const hotelId = user.hotel?.id || null;
+
     const tokens = this.generateTokens({
       email: user.email,
       id: user.id,
       sub: user.id,
+      hotelId,
     });
 
     return {
@@ -149,6 +172,7 @@ export class AuthService {
           roleId: user.roleType.id,
           name: user.roleType.name,
         },
+        hotelId,
       },
     };
   }

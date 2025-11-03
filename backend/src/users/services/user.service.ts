@@ -40,11 +40,19 @@ export class UserService {
     return { identificationType, roleType, phoneCode };
   }
 
-  async paginatedList(params: PaginatedListUsersParamsDto) {
+  async paginatedList(params: PaginatedListUsersParamsDto, hotelId?: number) {
     const skip = (params.page - 1) * params.perPage;
     const where: FindOptionsWhere<User>[] = [];
 
     const baseConditions: FindOptionsWhere<User> = {};
+
+    if (!hotelId) {
+      throw new Error(
+        'Tu usuario no tiene un hotel asignado. Contacta al administrador.',
+      );
+    }
+
+    baseConditions.hotel = { id: hotelId };
 
     if (params.identificationNumber) {
       baseConditions.identificationNumber = ILike(
@@ -151,19 +159,34 @@ export class UserService {
     return new ResponsePaginationDto(users, pageMetaDto);
   }
 
-  async paginatedUserSelect(params: PaginatedUserSelectParamsDto) {
+  async paginatedUserSelect(
+    params: PaginatedUserSelectParamsDto,
+    hotelId?: number,
+  ) {
     const skip = (params.page - 1) * params.perPage;
 
-    const where = [];
+    const where: FindOptionsWhere<User>[] = [];
+
+    const baseCondition: FindOptionsWhere<User> = {};
+
+    if (!hotelId) {
+      throw new Error(
+        'Tu usuario no tiene un hotel asignado. Contacta al administrador.',
+      );
+    }
+
+    baseCondition.hotel = { id: hotelId };
 
     if (params.search) {
       const term = `%${params.search.trim()}%`;
 
       where.push(
-        { firstName: ILike(term) },
-        { lastName: ILike(term) },
-        { identificationNumber: ILike(term) },
+        { ...baseCondition, firstName: ILike(term) },
+        { ...baseCondition, lastName: ILike(term) },
+        { ...baseCondition, identificationNumber: ILike(term) },
       );
+    } else {
+      where.push(baseCondition);
     }
 
     const [users, itemCount] = await this._userRepository.findAndCount({
@@ -186,5 +209,172 @@ export class UserService {
     });
 
     return new ResponsePaginationDto(users, pageMetaDto);
+  }
+
+  async paginatedListForAdmin(params: PaginatedListUsersParamsDto) {
+    const skip = (params.page - 1) * params.perPage;
+    const where: FindOptionsWhere<User>[] = [];
+
+    const baseConditions: FindOptionsWhere<User> = {};
+
+    if (params.identificationNumber) {
+      baseConditions.identificationNumber = ILike(
+        `%${params.identificationNumber}%`,
+      );
+    }
+
+    if (params.email) {
+      baseConditions.email = ILike(`%${params.email}%`);
+    }
+
+    if (params.firstName) {
+      baseConditions.firstName = ILike(`%${params.firstName}%`);
+    }
+
+    if (params.lastName) {
+      baseConditions.lastName = ILike(`%${params.lastName}%`);
+    }
+
+    if (params.phone) {
+      baseConditions.phone = ILike(`%${params.phone}%`);
+    }
+
+    if (params.roleType) {
+      baseConditions.roleType = { id: params.roleType };
+    }
+
+    if (params.isActive !== undefined) {
+      baseConditions.isActive = Equal(params.isActive);
+    }
+
+    if (params.identificationType) {
+      baseConditions.identificationType = {
+        id: Number(params.identificationType),
+      };
+    }
+
+    if (params.phoneCode) {
+      baseConditions.phoneCode = {
+        id: Number(params.phoneCode),
+      };
+    }
+
+    if (params.search) {
+      const searchConditions: FindOptionsWhere<User>[] = [
+        { firstName: ILike(`%${params.search}%`) },
+        { lastName: ILike(`%${params.search}%`) },
+        { email: ILike(`%${params.search}%`) },
+        { identificationNumber: ILike(`%${params.search}%`) },
+        { phone: ILike(`%${params.search}%`) },
+      ];
+
+      searchConditions.forEach((condition) => {
+        where.push({ ...baseConditions, ...condition });
+      });
+    } else {
+      where.push(baseConditions);
+    }
+
+    const [entities, itemCount] = await this._userRepository.findAndCount({
+      where,
+      skip,
+      take: params.perPage,
+      order: { createdAt: params.order ?? 'DESC' },
+      relations: ['roleType', 'identificationType', 'phoneCode', 'hotel'],
+    });
+
+    const users = entities.map((user) => {
+      const { createdAt, updatedAt, ...rest } = user;
+      return {
+        ...rest,
+        roleTypeId: user?.roleType?.id,
+        identificationTypeId: user?.identificationType?.id,
+        phoneCodeId: user?.phoneCode?.id,
+        hotelId: user?.hotel?.id,
+        roleType: user?.roleType
+          ? {
+              id: user.roleType.id,
+              code: user.roleType.code,
+              name: user.roleType.name,
+            }
+          : null,
+        identificationType: user?.identificationType
+          ? {
+              id: user.identificationType.id,
+              code: user.identificationType.code,
+              name: user.identificationType.name,
+            }
+          : null,
+        phoneCode: user?.phoneCode
+          ? {
+              id: user.phoneCode.id,
+              code: user.phoneCode.code,
+              name: user.phoneCode.name,
+            }
+          : null,
+        hotel: user?.hotel
+          ? {
+              id: user.hotel.id,
+              name: user.hotel.name,
+              code: user.hotel.code,
+            }
+          : null,
+      };
+    });
+
+    const pageMetaDto = new PageMetaDto({
+      itemCount,
+      pageOptionsDto: params,
+    });
+
+    return new ResponsePaginationDto(users, pageMetaDto);
+  }
+
+  async paginatedUserSelectForAdmin(params: PaginatedUserSelectParamsDto) {
+    const skip = (params.page - 1) * params.perPage;
+
+    const where: FindOptionsWhere<User>[] = [];
+
+    const baseCondition: FindOptionsWhere<User> = {};
+
+    if (params.search) {
+      const term = `%${params.search.trim()}%`;
+
+      where.push(
+        { ...baseCondition, firstName: ILike(term) },
+        { ...baseCondition, lastName: ILike(term) },
+        { ...baseCondition, identificationNumber: ILike(term) },
+      );
+    } else {
+      where.push(baseCondition);
+    }
+
+    const [users, itemCount] = await this._userRepository.findAndCount({
+      where: where.length ? where : undefined,
+      skip,
+      take: params.perPage,
+      order: { firstName: 'ASC' },
+      select: [
+        'id',
+        'firstName',
+        'lastName',
+        'identificationNumber',
+        'isActive',
+      ],
+      relations: ['hotel'],
+    });
+
+    const usersWithHotel = users.map((user) => ({
+      ...user,
+      hotelId: user.hotel?.id,
+      hotelName: user.hotel?.name,
+    }));
+
+    const pageMetaDto = new PageMetaDto({
+      itemCount,
+      pageOptionsDto: params,
+    });
+
+    return new ResponsePaginationDto(usersWithHotel, pageMetaDto);
   }
 }

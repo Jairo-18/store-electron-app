@@ -13,6 +13,7 @@ import {
 import { TaxeType } from './taxeType.entity';
 import { Product } from './product.entity';
 import { Accommodation } from './accommodation.entity';
+import { Hotel } from './hotel.entity';
 
 @Entity({ name: 'InvoiceDetaill' })
 export class InvoiceDetaill {
@@ -56,6 +57,10 @@ export class InvoiceDetaill {
   @ManyToOne(() => TaxeType, { nullable: true })
   @JoinColumn({ name: 'taxeTypeId' })
   taxeType?: TaxeType;
+
+  @ManyToOne(() => Hotel, (hotel) => hotel.invoiceDetaills, { nullable: true })
+  @JoinColumn({ name: 'hotelId' })
+  hotel?: Hotel;
 
   @Column({ type: 'timestamp', nullable: true })
   startDate?: Date;

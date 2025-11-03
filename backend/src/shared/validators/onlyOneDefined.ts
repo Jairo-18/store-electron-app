@@ -8,11 +8,11 @@ export function OnlyOneDefined(
   propertyNames: string[],
   validationOptions?: ValidationOptions,
 ) {
-  return function (object: Object) {
+  return function (object: object) {
     registerDecorator({
       name: 'OnlyOneDefined',
       target: object.constructor,
-      propertyName: '', // no aplica a una propiedad específica
+      propertyName: '',
       options: validationOptions,
       validator: {
         validate(_: any, args: ValidationArguments) {

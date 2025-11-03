@@ -28,13 +28,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.authService.validateSession({
       userId: payload.sub,
       token,
+      hotelId: payload.hotelId || null,
     });
 
     if (!user) {
       throw new UnauthorizedException('No autorizado');
     }
-
-    // Aquí devolvés el User completo, y así funciona @GetUser()
+    if (!user.hotelId) {
+      throw new UnauthorizedException(
+        'Tu usuario no tiene un hotel asignado. Contacta al administrador.',
+      );
+    }
     return user;
   }
 }

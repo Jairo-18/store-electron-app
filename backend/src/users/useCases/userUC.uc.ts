@@ -13,11 +13,22 @@ export class UserUC {
     return await this._userService.getRelatedDataToCreate();
   }
 
-  async paginatedList(params: PaginatedListUsersParamsDto) {
-    return await this._userService.paginatedList(params);
+  async paginatedList(params: PaginatedListUsersParamsDto, hotelId?: number) {
+    return await this._userService.paginatedList(params, hotelId);
   }
 
-  async paginatedPartialUser(params: PaginatedUserSelectParamsDto) {
-    return await this._userService.paginatedUserSelect(params);
+  async paginatedPartialUser(
+    params: PaginatedUserSelectParamsDto,
+    hotelId?: number,
+  ) {
+    return await this._userService.paginatedUserSelect(params, hotelId);
+  }
+
+  async paginatedListForAdmin(params: PaginatedListUsersParamsDto) {
+    return await this._userService.paginatedListForAdmin(params);
+  }
+
+  async paginatedPartialUserForAdmin(params: PaginatedUserSelectParamsDto) {
+    return await this._userService.paginatedUserSelectForAdmin(params);
   }
 }

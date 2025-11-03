@@ -1,5 +1,7 @@
 import { ServiceRepository } from './repositories/service.repository';
 import { Service } from './entities/services.entity';
+import { Hotel } from './entities/hotel.entity';
+import { HotelRepository } from './repositories/hotel.repository';
 import { ScheduleModule } from '@nestjs/schedule';
 import { InvoiceEventsListener } from './services/invoiceEventsListener.service';
 import { BalanceService } from './services/balance.service';
@@ -122,6 +124,7 @@ export class SharedModule {
           DiscountType,
           StateType,
           AccessSessions,
+          Hotel,
         ]),
         JwtModule.registerAsync({
           inject: [ConfigService],
@@ -170,6 +173,7 @@ export class SharedModule {
         RoleTypeRepository,
         TaxeTypeRepository,
         UserRepository,
+        HotelRepository,
         BalanceService,
         RepositoryService,
         InvoiceEventsListener,
@@ -201,6 +205,7 @@ export class SharedModule {
         RoleTypeRepository,
         TaxeTypeRepository,
         UserRepository,
+        HotelRepository,
         BalanceService,
         RepositoryService,
         InvoiceEventsListener,
