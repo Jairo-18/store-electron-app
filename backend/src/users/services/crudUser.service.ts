@@ -25,6 +25,8 @@ import {
   CreateUserDto,
   RecoveryPasswordDto,
   UpdateUserDto,
+  UpdateUserDtoForAdmin,
+  UserResponse,
 } from '../dtos/crudUser.dto';
 import * as bcrypt from 'bcryptjs';
 
@@ -41,7 +43,7 @@ export class CrudUserService {
 
   async create(
     createUserDto: CreateUserDto,
-    creatorHotelId?: number,
+    creatorHotelId?: string,
   ): Promise<{ rowId: string }> {
     createUserDto.email = createUserDto.email?.trim().toLowerCase() || null;
 
@@ -154,9 +156,9 @@ export class CrudUserService {
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
-    updaterHotelId?: number,
+    updaterHotelId?: string,
   ) {
-    const userExist = await this.findOne(id);
+    const userExist = await this.findOne(id, updaterHotelId);
     if (!userExist) {
       throw new HttpException('El usuario no existe', HttpStatus.NOT_FOUND);
     }
@@ -227,35 +229,59 @@ export class CrudUserService {
       }
     }
 
-    const roleType = updateUserDto.roleType
-      ? await this._roleTypeRepository.findOne({
-          where: { id: String(updateUserDto.roleType) },
-        })
-      : userExist.roleType;
+    const updatedUser: Partial<User> = {};
 
-    const identificationType = updateUserDto.identificationType
-      ? await this._identificationTypeRepository.findOne({
+    if (updateUserDto.identificationNumber !== undefined) {
+      updatedUser.identificationNumber = updateUserDto.identificationNumber;
+    }
+    if (updateUserDto.firstName !== undefined) {
+      updatedUser.firstName = updateUserDto.firstName;
+    }
+    if (updateUserDto.lastName !== undefined) {
+      updatedUser.lastName = updateUserDto.lastName;
+    }
+    if (updateUserDto.email !== undefined) {
+      updatedUser.email = updateUserDto.email;
+    }
+    if (updateUserDto.phone !== undefined) {
+      updatedUser.phone = updateUserDto.phone;
+    }
+    if (updateUserDto.isActive !== undefined) {
+      updatedUser.isActive = updateUserDto.isActive;
+    }
+
+    if (updateUserDto.roleType) {
+      const roleType = await this._roleTypeRepository.findOne({
+        where: { id: String(updateUserDto.roleType) },
+      });
+      if (roleType) {
+        updatedUser.roleType = roleType;
+      }
+    }
+
+    if (updateUserDto.identificationType) {
+      const identificationType =
+        await this._identificationTypeRepository.findOne({
           where: { id: Number(updateUserDto.identificationType) },
-        })
-      : userExist.identificationType;
+        });
+      if (identificationType) {
+        updatedUser.identificationType = identificationType;
+      }
+    }
 
-    const phoneCode = updateUserDto.phoneCode
-      ? await this._phoneCodeRepository.findOne({
-          where: { id: Number(updateUserDto.phoneCode) },
-        })
-      : userExist.phoneCode;
-
-    const updatedUser: Partial<User> = {
-      ...updateUserDto,
-      roleType,
-      identificationType,
-      phoneCode,
-    };
+    if (updateUserDto.phoneCode) {
+      const phoneCode = await this._phoneCodeRepository.findOne({
+        where: { id: Number(updateUserDto.phoneCode) },
+      });
+      if (phoneCode) {
+        updatedUser.phoneCode = phoneCode;
+      }
+    }
 
     return await this._userRepository.update({ id }, updatedUser);
   }
 
-  async findAll(hotelId?: number): Promise<User[]> {
+  async findAll(hotelId?: string): Promise<UserResponse[]> {
     if (!hotelId) {
       throw new HttpException(
         'Tu usuario no tiene un hotel asignado. Contacta al administrador.',
@@ -269,12 +295,53 @@ export class CrudUserService {
     });
 
     return users.map((user) => {
-      const { createdAt, updatedAt, ...userWithoutDates } = user;
-      return userWithoutDates;
+      const {
+        password,
+        resetToken,
+        resetTokenExpiry,
+        createdAt,
+        updatedAt,
+        roleType,
+        identificationType,
+        phoneCode,
+        hotel,
+        ...userData
+      } = user;
+
+      return {
+        ...userData,
+        roleType: roleType
+          ? {
+              id: roleType.id,
+              code: roleType.code,
+              name: roleType.name,
+            }
+          : null,
+        identificationType: identificationType
+          ? {
+              id: identificationType.id,
+              code: identificationType.code,
+              name: identificationType.name,
+            }
+          : null,
+        phoneCode: phoneCode
+          ? {
+              id: phoneCode.id,
+              code: phoneCode.code,
+              name: phoneCode.name,
+            }
+          : null,
+        hotel: hotel
+          ? {
+              id: hotel.id,
+              name: hotel.name,
+            }
+          : null,
+      };
     });
   }
 
-  async findOne(id: string, hotelId?: number) {
+  async findOne(id: string, hotelId?: string): Promise<UserResponse> {
     if (!hotelId) {
       throw new HttpException(
         'Tu usuario no tiene un hotel asignado. Contacta al administrador.',
@@ -294,12 +361,53 @@ export class CrudUserService {
       );
     }
 
-    const { createdAt, updatedAt, ...userWithoutDates } = user;
-    return userWithoutDates;
+    const {
+      password,
+      resetToken,
+      resetTokenExpiry,
+      createdAt,
+      updatedAt,
+      roleType,
+      identificationType,
+      phoneCode,
+      hotel,
+      ...userData
+    } = user;
+
+    return {
+      ...userData,
+      roleType: roleType
+        ? {
+            id: roleType.id,
+            code: roleType.code,
+            name: roleType.name,
+          }
+        : null,
+      identificationType: identificationType
+        ? {
+            id: identificationType.id,
+            code: identificationType.code,
+            name: identificationType.name,
+          }
+        : null,
+      phoneCode: phoneCode
+        ? {
+            id: phoneCode.id,
+            code: phoneCode.code,
+            name: phoneCode.name,
+          }
+        : null,
+      hotel: hotel
+        ? {
+            id: hotel.id,
+            name: hotel.name,
+          }
+        : null,
+    };
   }
 
-  async delete(id: string, deleterHotelId?: number): Promise<void> {
-    const user = await this.findOne(id);
+  async delete(id: string, deleterHotelId?: string): Promise<void> {
+    const user = await this.findOne(id, deleterHotelId);
 
     if (!deleterHotelId) {
       throw new HttpException(
@@ -400,7 +508,7 @@ export class CrudUserService {
 
   async createForAdmin(
     createUserDto: CreateUserDto,
-    targetHotelId: number,
+    targetHotelId: string,
   ): Promise<{ rowId: string }> {
     createUserDto.email = createUserDto.email?.trim().toLowerCase() || null;
 
@@ -506,18 +614,59 @@ export class CrudUserService {
     return { rowId: res.identifiers[0].id };
   }
 
-  async findAllForAdmin(): Promise<User[]> {
+  async findAllForAdmin(): Promise<UserResponse[]> {
     const users = await this._userRepository.find({
       relations: ['roleType', 'identificationType', 'phoneCode', 'hotel'],
     });
 
     return users.map((user) => {
-      const { createdAt, updatedAt, ...userWithoutDates } = user;
-      return userWithoutDates;
+      const {
+        password,
+        resetToken,
+        resetTokenExpiry,
+        createdAt,
+        updatedAt,
+        roleType,
+        identificationType,
+        phoneCode,
+        hotel,
+        ...userData
+      } = user;
+
+      return {
+        ...userData,
+        roleType: roleType
+          ? {
+              id: roleType.id,
+              code: roleType.code,
+              name: roleType.name,
+            }
+          : null,
+        identificationType: identificationType
+          ? {
+              id: identificationType.id,
+              code: identificationType.code,
+              name: identificationType.name,
+            }
+          : null,
+        phoneCode: phoneCode
+          ? {
+              id: phoneCode.id,
+              code: phoneCode.code,
+              name: phoneCode.name,
+            }
+          : null,
+        hotel: hotel
+          ? {
+              id: hotel.id,
+              name: hotel.name,
+            }
+          : null,
+      };
     });
   }
 
-  async findOneForAdmin(id: string) {
+  async findOneForAdmin(id: string): Promise<UserResponse> {
     const user = await this._userRepository.findOne({
       where: { id },
       relations: ['roleType', 'identificationType', 'phoneCode', 'hotel'],
@@ -527,8 +676,169 @@ export class CrudUserService {
       throw new HttpException('El usuario no existe', HttpStatus.NOT_FOUND);
     }
 
-    const { createdAt, updatedAt, ...userWithoutDates } = user;
-    return userWithoutDates;
+    const {
+      password,
+      resetToken,
+      resetTokenExpiry,
+      createdAt,
+      updatedAt,
+      roleType,
+      identificationType,
+      phoneCode,
+      hotel,
+      ...userData
+    } = user;
+
+    return {
+      ...userData,
+      roleType: roleType
+        ? {
+            id: roleType.id,
+            code: roleType.code,
+            name: roleType.name,
+          }
+        : null,
+      identificationType: identificationType
+        ? {
+            id: identificationType.id,
+            code: identificationType.code,
+            name: identificationType.name,
+          }
+        : null,
+      phoneCode: phoneCode
+        ? {
+            id: phoneCode.id,
+            code: phoneCode.code,
+            name: phoneCode.name,
+          }
+        : null,
+      hotel: hotel
+        ? {
+            id: hotel.id,
+            name: hotel.name,
+          }
+        : null,
+    };
+  }
+
+  async updateForAdmin(id: string, updateUserDto: UpdateUserDtoForAdmin) {
+    const userExist = await this.findOneForAdmin(id);
+    if (!userExist) {
+      throw new HttpException('El usuario no existe', HttpStatus.NOT_FOUND);
+    }
+
+    if (updateUserDto.email) {
+      const emailExist = await this._userRepository.findOne({
+        where: {
+          id: Not(id),
+          email: updateUserDto.email,
+        },
+      });
+      if (emailExist) {
+        throw new HttpException(
+          'Ya existe un usuario con este correo',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+
+    if (
+      updateUserDto.identificationType ||
+      updateUserDto.identificationNumber
+    ) {
+      const identificationNumberExist = await this._userRepository.findOne({
+        where: {
+          id: Not(id),
+          identificationNumber: updateUserDto.identificationNumber,
+          identificationType: { id: Number(updateUserDto.identificationType) },
+        },
+      });
+      if (identificationNumberExist) {
+        throw new HttpException(
+          'Ya existe un usuario con ese tipo y número de identificación',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+
+    if (updateUserDto.phoneCode || updateUserDto.phone) {
+      const phoneExist = await this._userRepository.findOne({
+        where: {
+          id: Not(id),
+          phone: updateUserDto.phone,
+          phoneCode: { id: Number(updateUserDto.phoneCode) },
+        },
+      });
+      if (phoneExist) {
+        throw new HttpException(
+          'Ya existe un usuario con ese tipo y número de teléfono',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+
+    const updatedUser: Partial<User> = {};
+
+    if (updateUserDto.identificationNumber !== undefined) {
+      updatedUser.identificationNumber = updateUserDto.identificationNumber;
+    }
+    if (updateUserDto.firstName !== undefined) {
+      updatedUser.firstName = updateUserDto.firstName;
+    }
+    if (updateUserDto.lastName !== undefined) {
+      updatedUser.lastName = updateUserDto.lastName;
+    }
+    if (updateUserDto.email !== undefined) {
+      updatedUser.email = updateUserDto.email;
+    }
+    if (updateUserDto.phone !== undefined) {
+      updatedUser.phone = updateUserDto.phone;
+    }
+    if (updateUserDto.isActive !== undefined) {
+      updatedUser.isActive = updateUserDto.isActive;
+    }
+
+    if (updateUserDto.roleType) {
+      const roleType = await this._roleTypeRepository.findOne({
+        where: { id: String(updateUserDto.roleType) },
+      });
+      if (roleType) {
+        updatedUser.roleType = roleType;
+      }
+    }
+
+    if (updateUserDto.identificationType) {
+      const identificationType =
+        await this._identificationTypeRepository.findOne({
+          where: { id: Number(updateUserDto.identificationType) },
+        });
+      if (identificationType) {
+        updatedUser.identificationType = identificationType;
+      }
+    }
+
+    if (updateUserDto.phoneCode) {
+      const phoneCode = await this._phoneCodeRepository.findOne({
+        where: { id: Number(updateUserDto.phoneCode) },
+      });
+      if (phoneCode) {
+        updatedUser.phoneCode = phoneCode;
+      }
+    }
+
+    if (updateUserDto.hotelId !== undefined) {
+      const hotel = await this._userRepository.manager.findOne(Hotel, {
+        where: { id: updateUserDto.hotelId },
+      });
+
+      if (!hotel && updateUserDto.hotelId !== null) {
+        throw new HttpException('El hotel no existe', HttpStatus.NOT_FOUND);
+      }
+
+      updatedUser.hotel = hotel;
+    }
+
+    return await this._userRepository.update({ id }, updatedUser);
   }
 
   async deleteForAdmin(id: string): Promise<void> {

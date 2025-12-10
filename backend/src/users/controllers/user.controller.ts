@@ -19,6 +19,9 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { HotelId } from 'src/shared/decorators/hotelId.decorator';
+import { Roles } from 'src/shared/decorators/roles.decorator';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
+import { UserRole } from 'src/shared/constants/roles.constant';
 import { CrudUserUC } from '../useCases/crudUserUC';
 import { UserUC } from '../useCases/userUC.uc';
 import {
@@ -26,6 +29,7 @@ import {
   GetAllUsersResposeDto,
   GetUserResponseDto,
   UpdateUserDto,
+  UpdateUserDtoForAdmin,
 } from '../dtos/crudUser.dto';
 import {
   CreatedRecordResponseDto,
@@ -53,16 +57,20 @@ export class UserController {
 
   @Get('/paginated-partial')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN, UserRole.EMP)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: ResponsePaginationDto<PartialUserDto> })
   async getPaginatedPartial(
     @Query() params: PaginatedUserSelectParamsDto,
-    @HotelId() hotelId: number,
+    @HotelId() hotelId: string,
   ): Promise<ResponsePaginationDto<PartialUserDto>> {
     return this._userUC.paginatedPartialUser(params, hotelId);
   }
 
   @Get('/create/related-data')
+  @ApiBearerAuth()
+  @Roles(UserRole.ADMIN, UserRole.EMP)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: CreateUserRelatedDataReponseDto })
   async getRelatedData(): Promise<CreateUserRelatedDataReponseDto> {
     const data = await this._userUC.getRelatedDataToCreate();
@@ -74,9 +82,10 @@ export class UserController {
 
   @Get()
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN, UserRole.EMP)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: GetAllUsersResposeDto })
-  async findAll(@HotelId() hotelId: number): Promise<GetAllUsersResposeDto> {
+  async findAll(@HotelId() hotelId: string): Promise<GetAllUsersResposeDto> {
     const users = await this._crudUserUC.findAll(hotelId);
     return {
       statusCode: HttpStatus.OK,
@@ -86,12 +95,13 @@ export class UserController {
 
   @Post('create')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN, UserRole.EMP)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: CreatedRecordResponseDto })
   @ApiConflictResponse({ type: DuplicatedResponseDto })
   async create(
     @Body() createUserDto: CreateUserDto,
-    @HotelId() hotelId: number,
+    @HotelId() hotelId: string,
   ): Promise<CreatedRecordResponseDto> {
     const rowId = await this._crudUserUC.create(createUserDto, hotelId);
     return {
@@ -104,23 +114,25 @@ export class UserController {
 
   @Get('/paginated-list')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN, UserRole.EMP)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: ResponsePaginationDto<UserResponseDto> })
   async getPaginatedList(
     @Query() params: PaginatedListUsersParamsDto,
-    @HotelId() hotelId: number,
+    @HotelId() hotelId: string,
   ): Promise<ResponsePaginationDto<UserResponseDto>> {
     return await this._userUC.paginatedList(params, hotelId);
   }
 
   @Get(':id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN, UserRole.EMP)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: GetUserResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async findOne(
     @Param('id') id: string,
-    @HotelId() hotelId: number,
+    @HotelId() hotelId: string,
   ): Promise<GetUserResponseDto> {
     const user = await this._crudUserUC.findOne(id, hotelId);
     return {
@@ -131,13 +143,14 @@ export class UserController {
 
   @Patch(':id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN, UserRole.EMP)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: UpdateRecordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-    @HotelId() hotelId: number,
+    @HotelId() hotelId: string,
   ): Promise<UpdateRecordResponseDto> {
     await this._crudUserUC.update(id, updateUserDto, hotelId);
     return {
@@ -149,12 +162,13 @@ export class UserController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN, UserRole.EMP)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: DeleteReCordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async delete(
     @Param('id') id: string,
-    @HotelId() hotelId: number,
+    @HotelId() hotelId: string,
   ): Promise<DeleteReCordResponseDto> {
     await this._crudUserUC.delete(id, hotelId);
     return {
@@ -166,12 +180,13 @@ export class UserController {
 
   @Post('admin/create')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: CreatedRecordResponseDto })
   @ApiConflictResponse({ type: DuplicatedResponseDto })
   async adminCreate(
     @Body() createUserDto: CreateUserDto,
-    @Query('hotelId') hotelId: number,
+    @Query('hotelId') hotelId: string,
   ): Promise<CreatedRecordResponseDto> {
     const rowId = await this._crudUserUC.createForAdmin(createUserDto, hotelId);
     return {
@@ -184,7 +199,8 @@ export class UserController {
 
   @Get('admin/paginated-list')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: ResponsePaginationDto<UserResponseDto> })
   async getAdminPaginatedList(
     @Query() params: PaginatedListUsersParamsDto,
@@ -194,7 +210,8 @@ export class UserController {
 
   @Get('admin/paginated-partial')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: ResponsePaginationDto<PartialUserDto> })
   async getAdminPaginatedPartial(
     @Query() params: PaginatedUserSelectParamsDto,
@@ -204,7 +221,8 @@ export class UserController {
 
   @Get('admin/all')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: GetAllUsersResposeDto })
   async findAllAdmin(): Promise<GetAllUsersResposeDto> {
     const users = await this._crudUserUC.findAllForAdmin();
@@ -216,7 +234,8 @@ export class UserController {
 
   @Get('admin/:id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: GetUserResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async findOneAdmin(@Param('id') id: string): Promise<GetUserResponseDto> {
@@ -227,9 +246,28 @@ export class UserController {
     };
   }
 
+  @Patch('admin/:id')
+  @ApiBearerAuth()
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
+  @ApiOkResponse({ type: UpdateRecordResponseDto })
+  @ApiNotFoundResponse({ type: NotFoundResponseDto })
+  async updateAdmin(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDtoForAdmin,
+  ): Promise<UpdateRecordResponseDto> {
+    await this._crudUserUC.updateForAdmin(id, updateUserDto);
+    return {
+      title: 'Actualizar usuario (Admin)',
+      message: 'Usuario actualizado correctamente',
+      statusCode: HttpStatus.OK,
+    };
+  }
+
   @Delete('admin/:id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: DeleteReCordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async deleteAdmin(@Param('id') id: string): Promise<DeleteReCordResponseDto> {

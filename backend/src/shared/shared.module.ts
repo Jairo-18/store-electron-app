@@ -55,6 +55,7 @@ import { MailTemplateService } from './services/mail-template.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { JwtModule } from '@nestjs/jwt';
 import { PasswordService } from 'src/users/services/password.service';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({})
 export class SharedModule {
@@ -188,6 +189,7 @@ export class SharedModule {
         MailsService,
         MailTemplateService,
         PasswordService,
+        RolesGuard,
       ],
       exports: [
         TypeOrmModule,
@@ -220,6 +222,7 @@ export class SharedModule {
         MailsService,
         MailTemplateService,
         PasswordService,
+        RolesGuard,
       ],
     };
   }

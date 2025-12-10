@@ -1,5 +1,5 @@
 import { BaseResponseDto } from './../../shared/dtos/response.dto';
-import { Product } from './../../shared/entities/product.entity';
+
 import {
   GET_ALL_PRODUCTS_EXAMPLE,
   GET_PRODUCT_EXAMPLE,
@@ -13,6 +13,7 @@ import {
   IsNumber,
   IsBoolean,
   Min,
+  IsUUID,
 } from 'class-validator';
 
 export class CreateProductDto {
@@ -95,6 +96,15 @@ export class CreateProductDto {
   @IsNumber()
   @IsNotEmpty({ message: 'La categoría es requerida' })
   categoryTypeId: number;
+
+  @ApiProperty({
+    example: '972cc47f-6e76-4a94-b34f-2c36f9c34266',
+    description: 'ID del hotel',
+    required: false,
+  })
+  @IsOptional()
+  @IsUUID()
+  hotelId?: string;
 }
 
 export class UpdateProductDto {
@@ -169,8 +179,39 @@ export class UpdateProductDto {
   categoryTypeId?: number;
 }
 
+export class UpdateProductDtoForAdmin extends UpdateProductDto {
+  @ApiProperty({
+    example: '972cc47f-6e76-4a94-b34f-2c36f9c34266',
+    description: 'ID del hotel',
+    required: false,
+  })
+  @IsOptional()
+  @IsUUID()
+  hotelId?: string;
+}
+
+export interface ProductResponse {
+  id: number;
+  code?: string;
+  name: string;
+  description?: string;
+  amount?: number;
+  priceBuy: number;
+  priceSale: number;
+  isActive: boolean;
+  categoryType?: {
+    id: number;
+    code: string;
+    name: string;
+  };
+  hotel?: {
+    id: string;
+    name: string;
+  };
+}
+
 export interface GetAllProductsRespose {
-  products: Product[];
+  products: ProductResponse[];
 }
 
 export class GetAllProductsResposeDto implements BaseResponseDto {
@@ -196,5 +237,5 @@ export class GetProductDto implements BaseResponseDto {
     type: Object,
     example: GET_PRODUCT_EXAMPLE,
   })
-  data: Product;
+  data: ProductResponse;
 }

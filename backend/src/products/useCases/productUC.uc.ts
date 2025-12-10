@@ -13,11 +13,32 @@ export class ProductUC {
     return await this._crudProductService.getRelatedDataToCreate();
   }
 
-  async paginatedList(params: PaginatedListProductsParamsDto) {
-    return await this._crudProductService.paginatedList(params);
+  async paginatedList(
+    params: PaginatedListProductsParamsDto,
+    hotelId: string,
+  ) {
+    return await this._crudProductService.paginatedList(params, hotelId);
   }
 
-  async paginatedPartialProduct(params: PaginatedProductSelectParamsDto) {
-    return await this._crudProductService.paginatedPartialProducts(params);
+  async paginatedListForAdmin(params: PaginatedListProductsParamsDto) {
+    return await this._crudProductService.paginatedListForAdmin(params);
+  }
+
+  async paginatedPartialProduct(
+    params: PaginatedProductSelectParamsDto,
+    hotelId: string,
+  ) {
+    return await this._crudProductService.paginatedPartialProducts(
+      params,
+      hotelId,
+    );
+  }
+
+  async paginatedPartialProductForAdmin(
+    params: PaginatedProductSelectParamsDto,
+  ) {
+    return await this._crudProductService.paginatedPartialProductsForAdmin(
+      params,
+    );
   }
 }

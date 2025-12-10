@@ -91,7 +91,7 @@ export class AuthService {
   }: {
     userId: string;
     token: string;
-    hotelId?: number;
+    hotelId?: string;
   }) {
     let payload;
 

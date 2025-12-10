@@ -9,4 +9,6 @@ export interface ProductInterfacePaginatedList {
   priceSale: number;
   isActive: boolean;
   categoryType: CategoryTypeClean;
+  hotelId?: string;
+  hotelName?: string;
 }

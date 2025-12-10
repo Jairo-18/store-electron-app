@@ -67,7 +67,7 @@ export interface RoleType {
 
 export interface SignInResponse {
   tokens: { accessToken: string; refreshToken: string };
-  user: { userId: string; roleType: RoleType; hotelId?: number };
+  user: { userId: string; roleType: RoleType; hotelId?: string };
 }
 
 export class SignInResponseDto implements BaseResponseDto {
@@ -117,7 +117,7 @@ export class AuthTokenResponseDto {
         roleTypeId: '53ec2766-ea95-4dab-ad9a-',
         name: 'Clientes',
       },
-      hotelId: 1,
+      hotelId: '53ec2766-ea95-4dab-ad9a-4dab-ad9a',
     },
   })
   user: {
@@ -126,7 +126,7 @@ export class AuthTokenResponseDto {
       roleTypeId: string;
       name: string;
     };
-    hotelId?: number;
+    hotelId?: string;
   };
 
   @ApiProperty({

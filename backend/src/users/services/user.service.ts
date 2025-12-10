@@ -4,7 +4,7 @@ import { ResponsePaginationDto } from './../../shared/dtos/pagination.dto';
 import { PageMetaDto } from './../../shared/dtos/pageMeta.dto';
 import { UserRepository } from './../../shared/repositories/user.repository';
 import { RepositoryService } from '../../shared/services/repositoriry.service';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { Equal, FindOptionsWhere, ILike } from 'typeorm';
 import {
@@ -40,15 +40,16 @@ export class UserService {
     return { identificationType, roleType, phoneCode };
   }
 
-  async paginatedList(params: PaginatedListUsersParamsDto, hotelId?: number) {
+  async paginatedList(params: PaginatedListUsersParamsDto, hotelId?: string) {
     const skip = (params.page - 1) * params.perPage;
     const where: FindOptionsWhere<User>[] = [];
 
     const baseConditions: FindOptionsWhere<User> = {};
 
     if (!hotelId) {
-      throw new Error(
+      throw new HttpException(
         'Tu usuario no tiene un hotel asignado. Contacta al administrador.',
+        HttpStatus.FORBIDDEN,
       );
     }
 
@@ -117,16 +118,25 @@ export class UserService {
       skip,
       take: params.perPage,
       order: { createdAt: params.order ?? 'DESC' },
-      relations: ['roleType', 'identificationType', 'phoneCode'],
+      relations: ['roleType', 'identificationType', 'phoneCode', 'hotel'],
     });
 
     const users = entities.map((user) => {
-      const { createdAt, updatedAt, ...rest } = user;
+      const {
+        password,
+        resetToken,
+        resetTokenExpiry,
+        createdAt,
+        updatedAt,
+        ...rest
+      } = user;
       return {
         ...rest,
         roleTypeId: user?.roleType?.id,
         identificationTypeId: user?.identificationType?.id,
         phoneCodeId: user?.phoneCode?.id,
+        hotelId: user?.hotel?.id,
+        hotelName: user?.hotel?.name,
         roleType: user?.roleType
           ? {
               id: user.roleType.id,
@@ -161,7 +171,7 @@ export class UserService {
 
   async paginatedUserSelect(
     params: PaginatedUserSelectParamsDto,
-    hotelId?: number,
+    hotelId?: string,
   ) {
     const skip = (params.page - 1) * params.perPage;
 
@@ -170,8 +180,9 @@ export class UserService {
     const baseCondition: FindOptionsWhere<User> = {};
 
     if (!hotelId) {
-      throw new Error(
+      throw new HttpException(
         'Tu usuario no tiene un hotel asignado. Contacta al administrador.',
+        HttpStatus.FORBIDDEN,
       );
     }
 

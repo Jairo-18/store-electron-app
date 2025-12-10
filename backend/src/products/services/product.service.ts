@@ -29,7 +29,114 @@ export class CrudProductService {
     return { categoryType };
   }
 
-  async paginatedList(params: PaginatedListProductsParamsDto) {
+  async paginatedList(
+    params: PaginatedListProductsParamsDto,
+    hotelId: string,
+  ) {
+    const skip = (params.page - 1) * params.perPage;
+    const where: FindOptionsWhere<Product>[] = [];
+
+    const baseConditions: FindOptionsWhere<Product> = {
+      hotel: { id: hotelId },
+    };
+
+    if (params.name) {
+      baseConditions.name = ILike(`%${params.name}%`);
+    }
+
+    if (params.code) {
+      baseConditions.code = ILike(`%${params.code}%`);
+    }
+
+    if (params.description) {
+      baseConditions.description = ILike(`%${params.description}%`);
+    }
+
+    if (params.amount !== undefined) {
+      baseConditions.amount = Equal(params.amount);
+    }
+
+    if (params.priceBuy !== undefined) {
+      baseConditions.priceBuy = Equal(params.priceBuy);
+    }
+
+    if (params.priceSale !== undefined) {
+      baseConditions.priceSale = Equal(params.priceSale);
+    }
+
+    if (params.isActive !== undefined) {
+      baseConditions.isActive = Equal(params.isActive);
+    }
+
+    if (params.categoryType) {
+      baseConditions.categoryType = {
+        id: params.categoryType,
+      };
+    }
+
+    if (params.search) {
+      const search = params.search.trim();
+      const searchConditions: FindOptionsWhere<Product>[] = [
+        { name: ILike(`%${search}%`), hotel: { id: hotelId } },
+        { code: ILike(`%${search}%`), hotel: { id: hotelId } },
+        { description: ILike(`%${search}%`), hotel: { id: hotelId } },
+      ];
+
+      const searchNumber = Number(search);
+      if (!isNaN(searchNumber)) {
+        searchConditions.push(
+          { amount: Equal(searchNumber), hotel: { id: hotelId } },
+          { priceBuy: Equal(searchNumber), hotel: { id: hotelId } },
+          { priceSale: Equal(searchNumber), hotel: { id: hotelId } },
+        );
+      }
+
+      searchConditions.forEach((condition) => {
+        where.push({ ...baseConditions, ...condition });
+      });
+    } else {
+      where.push(baseConditions);
+    }
+
+    const [entities, itemCount] = await this._productRepository.findAndCount({
+      where,
+      skip,
+      take: params.perPage,
+      order: { createdAt: params.order ?? 'DESC' },
+      relations: ['categoryType', 'hotel'],
+    });
+
+    const products: ProductInterfacePaginatedList[] = entities.map(
+      (product) => ({
+        id: product.id,
+        code: product.code,
+        name: product.name,
+        description: product.description,
+        amount: product.amount,
+        isActive: product.isActive,
+        priceBuy: product.priceBuy,
+        priceSale: product.priceSale,
+        categoryType: product.categoryType
+          ? {
+              id: product.categoryType.id,
+              code: product.categoryType.code,
+              name: product.categoryType.name,
+            }
+          : null,
+        hotelId: product.hotel?.id,
+        hotelName: product.hotel?.name,
+      }),
+    );
+
+    const pageMetaDto = new PageMetaDto({
+      itemCount,
+      pageOptionsDto: params,
+    });
+
+    return new ResponsePaginationDto(products, pageMetaDto);
+  }
+
+  async paginatedListForAdmin(params: PaginatedListProductsParamsDto) {
     const skip = (params.page - 1) * params.perPage;
     const where: FindOptionsWhere<Product>[] = [];
 
@@ -98,7 +205,7 @@ export class CrudProductService {
       skip,
       take: params.perPage,
       order: { createdAt: params.order ?? 'DESC' },
-      relations: ['categoryType'],
+      relations: ['categoryType', 'hotel'],
     });
 
     const products: ProductInterfacePaginatedList[] = entities.map(
@@ -118,6 +225,8 @@ export class CrudProductService {
               name: product.categoryType.name,
             }
           : null,
+        hotelId: product.hotel?.id,
+        hotelName: product.hotel?.name,
       }),
     );
 
@@ -130,6 +239,40 @@ export class CrudProductService {
   }
 
   async paginatedPartialProducts(
+    params: PaginatedProductSelectParamsDto,
+    hotelId: string,
+  ): Promise<ResponsePaginationDto<PartialProductDto>> {
+    const skip = (params.page - 1) * params.perPage;
+    const where = [];
+
+    if (params.search) {
+      const search = params.search.trim();
+      where.push({ name: ILike(`%${search}%`), hotel: { id: hotelId } });
+    } else {
+      where.push({ hotel: { id: hotelId } });
+    }
+
+    const [entities, itemCount] = await this._productRepository.findAndCount({
+      where,
+      skip,
+      take: params.perPage,
+      order: { name: params.order ?? 'ASC' },
+      select: ['name'],
+    });
+
+    const items: PartialProductDto[] = entities.map((e) => ({
+      name: e.name!,
+    }));
+
+    const pageMetaDto = new PageMetaDto({
+      itemCount,
+      pageOptionsDto: params,
+    });
+
+    return new ResponsePaginationDto(items, pageMetaDto);
+  }
+
+  async paginatedPartialProductsForAdmin(
     params: PaginatedProductSelectParamsDto,
   ): Promise<ResponsePaginationDto<PartialProductDto>> {
     const skip = (params.page - 1) * params.perPage;

@@ -1,27 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { CrudUserService } from '../services/crudUser.service';
-import { CreateUserDto, UpdateUserDto } from '../dtos/crudUser.dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  UpdateUserDtoForAdmin,
+} from '../dtos/crudUser.dto';
 
 @Injectable()
 export class CrudUserUC {
   constructor(private readonly _crudUserService: CrudUserService) {}
 
-  async create(createUserDto: CreateUserDto, creatorHotelId?: number) {
+  async create(createUserDto: CreateUserDto, creatorHotelId?: string) {
     return await this._crudUserService.create(createUserDto, creatorHotelId);
   }
 
-  async findAll(hotelId?: number) {
+  async findAll(hotelId?: string) {
     return await this._crudUserService.findAll(hotelId);
   }
 
-  async findOne(id: string, hotelId?: number) {
+  async findOne(id: string, hotelId?: string) {
     return await this._crudUserService.findOne(id, hotelId);
   }
 
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
-    updaterHotelId?: number,
+    updaterHotelId?: string,
   ) {
     return await this._crudUserService.update(
       id,
@@ -30,11 +34,11 @@ export class CrudUserUC {
     );
   }
 
-  async delete(id: string, deleterHotelId?: number) {
+  async delete(id: string, deleterHotelId?: string) {
     return await this._crudUserService.delete(id, deleterHotelId);
   }
 
-  async createForAdmin(createUserDto: CreateUserDto, targetHotelId: number) {
+  async createForAdmin(createUserDto: CreateUserDto, targetHotelId: string) {
     return await this._crudUserService.createForAdmin(
       createUserDto,
       targetHotelId,
@@ -47,6 +51,10 @@ export class CrudUserUC {
 
   async findOneForAdmin(id: string) {
     return await this._crudUserService.findOneForAdmin(id);
+  }
+
+  async updateForAdmin(id: string, updateUserDto: UpdateUserDtoForAdmin) {
+    return await this._crudUserService.updateForAdmin(id, updateUserDto);
   }
 
   async deleteForAdmin(id: string) {

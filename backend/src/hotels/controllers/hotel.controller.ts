@@ -5,7 +5,7 @@ import {
   Get,
   HttpStatus,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -20,6 +20,9 @@ import {
   ApiCreatedResponse,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { Roles } from 'src/shared/decorators/roles.decorator';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
+import { UserRole } from 'src/shared/constants/roles.constant';
 import { HotelUseCase } from '../useCases/hotel.usecase';
 import {
   CreateHotelDto,
@@ -44,7 +47,8 @@ export class HotelController {
 
   @Post()
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiCreatedResponse({ type: CreatedRecordResponseDto })
   @ApiConflictResponse({ type: DuplicatedResponseDto })
   async create(
@@ -59,9 +63,10 @@ export class HotelController {
     };
   }
 
-  @Get()
+  @Get('/paginated-list')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: ResponsePaginationDto })
   async findAll(
     @Query() query: QueryHotelDto,
@@ -71,11 +76,12 @@ export class HotelController {
 
   @Get(':id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: GetHotelResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async findOne(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
   ): Promise<GetHotelResponseDto> {
     const hotel = await this._hotelUseCase.findOne(id);
     return {
@@ -86,12 +92,13 @@ export class HotelController {
 
   @Patch(':id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: UpdateRecordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   @ApiConflictResponse({ type: DuplicatedResponseDto })
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateHotelDto: UpdateHotelDto,
   ): Promise<UpdateRecordResponseDto> {
     await this._hotelUseCase.update(id, updateHotelDto);
@@ -104,11 +111,12 @@ export class HotelController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiOkResponse({ type: DeleteReCordResponseDto })
   @ApiNotFoundResponse({ type: NotFoundResponseDto })
   async delete(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
   ): Promise<DeleteReCordResponseDto> {
     await this._hotelUseCase.delete(id);
     return {

@@ -1,5 +1,4 @@
 import { GET_USER_EXAMPLE } from './../constants/examples.conts';
-import { User } from './../../shared/entities/user.entity';
 import { BaseResponseDto } from './../../shared/dtos/response.dto';
 import { NOT_EMPTY_MESSAGE_ID } from './../../shared/constants/validator-messages.const';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -127,17 +126,46 @@ export class CreateUserDto {
 
 export class CreateUserDtoWithHotel extends CreateUserDto {
   @ApiProperty({
-    example: 1,
+    example: '53ec2766-ea95-4dab-ad9a-4dab-ad9a',
     required: true,
     description: 'ID del hotel (solo para super-admin)',
   })
-  @IsNumber()
+  @IsUUID()
   @IsNotEmpty({ message: 'El hotel es requerido' })
-  hotelId: number;
+  hotelId: string;
+}
+
+export interface UserResponse {
+  id: string;
+  identificationNumber: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  isActive: boolean;
+  roleType?: {
+    id: string;
+    code: string;
+    name: string;
+  };
+  identificationType?: {
+    id: number;
+    code: string;
+    name: string;
+  };
+  phoneCode?: {
+    id: number;
+    code: string;
+    name: string;
+  };
+  hotel?: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface GetAllUsersRespose {
-  users: User[];
+  users: UserResponse[];
 }
 
 export class GetAllUsersResposeDto implements BaseResponseDto {
@@ -163,7 +191,7 @@ export class GetUserResponseDto implements BaseResponseDto {
     type: Object,
     example: GET_USER_EXAMPLE,
   })
-  data: Partial<User>;
+  data: UserResponse;
 }
 
 export class UpdateUserDto {
@@ -247,6 +275,17 @@ export class UpdateUserDto {
   @IsOptional()
   @IsUUID('4', { message: 'El ID del rol no es válido' })
   roleType: string;
+}
+
+export class UpdateUserDtoForAdmin extends UpdateUserDto {
+  @ApiProperty({
+    example: '53ec2766-ea95-4dab-ad9a-4dab-ad9a',
+    required: false,
+    description: 'ID del hotel (solo para admin)',
+  })
+  @IsOptional()
+  @IsUUID()
+  hotelId?: string;
 }
 
 export class ChangePasswordBaseDto {

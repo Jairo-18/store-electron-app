@@ -18,15 +18,15 @@ export class HotelUseCase {
     return await this._hotelService.findAll(query);
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return await this._hotelService.findOne(id);
   }
 
-  async update(id: number, updateHotelDto: UpdateHotelDto) {
+  async update(id: string, updateHotelDto: UpdateHotelDto) {
     return await this._hotelService.update(id, updateHotelDto);
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     return await this._hotelService.delete(id);
   }
 }

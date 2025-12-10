@@ -21,8 +21,8 @@ import { AccessSessions } from './accessSessions.entity';
 
 @Entity({ name: 'Hotel' })
 export class Hotel {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column('varchar', { length: 255, nullable: false })
   name: string;

@@ -19,7 +19,7 @@ export class HotelService {
     private readonly _phoneCodeRepository: PhoneCodeRepository,
   ) {}
 
-  async create(createHotelDto: CreateHotelDto): Promise<{ rowId: number }> {
+  async create(createHotelDto: CreateHotelDto): Promise<{ rowId: string }> {
     createHotelDto.email = createHotelDto.email.trim().toLowerCase();
 
     const existingHotelByEmail = await this._hotelRepository.findOne({
@@ -71,7 +71,7 @@ export class HotelService {
     return { rowId: result.identifiers[0].id };
   }
 
-  async update(id: number, updateHotelDto: UpdateHotelDto) {
+  async update(id: string, updateHotelDto: UpdateHotelDto) {
     const hotelExist = await this.findOne(id);
     if (!hotelExist) {
       throw new HttpException('El hotel no existe', HttpStatus.NOT_FOUND);
@@ -202,7 +202,7 @@ export class HotelService {
     return new ResponsePaginationDto(hotels, pageMetaDto);
   }
 
-  async findOne(id: number): Promise<Hotel> {
+  async findOne(id: string): Promise<Hotel> {
     const hotel = await this._hotelRepository.findOne({
       where: { id },
       relations: ['phoneCode'],
@@ -221,7 +221,7 @@ export class HotelService {
     return hotel;
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const hotel = await this.findOne(id);
     if (!hotel) {
       throw new HttpException('El hotel no existe', HttpStatus.NOT_FOUND);
